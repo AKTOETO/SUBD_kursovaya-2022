@@ -1,118 +1,122 @@
 ﻿#include <iostream>
 #include <fstream>
+#include <string>
 //#include "../LW4-2022/LW4/LW4.hpp"
 #include"../LW4/my_list/my_list.hpp"
-
-// Класс перечислений НОСИТЕЛЬ
-enum class Storage
-{
-	gramophone_record = 0,	// грампластинка
-	audio_cassettes,		// аудиокассета
-	laser_disk				// лазерный диск
-};
 
 // Структура ИМЯ ФАМИЛИЯ
 struct NameSurname
 {
-	char* m_name;
-	char* m_surname;
+	string m_name;
+	string m_surname;
 
 	// конструктор по умолчанию
 	NameSurname()
-		:m_name(nullptr), m_surname(nullptr)
-	{}
+		:m_name(""), m_surname("")
+	{
+	}
 
 	// конструктор с параметрами
-	NameSurname(char* _name, char* _surname)
+	NameSurname(string _name, string _surname)
 		:m_name(_name), m_surname(_surname)
-	{}
+	{
+	}
 
 	// деструктор
 	~NameSurname()
 	{
-		// очистка динамической памяти
-		if (m_name != nullptr)
-			delete m_name;
+	}
 
-		if (m_surname != nullptr)
-			delete m_surname;
+	// оператор вывода
+	friend ostream& operator<<(ostream& _out_stream, const NameSurname& _name)
+	{
+		_out_stream << _name.m_name << " "
+			<< _name.m_surname;
+		return _out_stream;
 	}
 };
 
 // Структура данных МУЗЫКАЛЬНЫЙ ТОВАР
 struct MusicStuff
 {
-	Storage m_storage;		// носитель
-	int m_serial_number;	// порядковый номер
-	char* m_name;			// название
-	NameSurname m_artist_name;// имя исполнителя
-	int m_sound_time;		// время звучания в минутах
-	int m_number_of_plays;	// количество воспросизведений
-	int m_price;			// цена
+	string m_storage;			// носитель
+	int m_serial_number;		// порядковый номер
+	string m_name;				// название
+	NameSurname m_artist_name;	// имя исполнителя
+	int m_sound_time;			// время звучания в минутах
+	int m_number_of_plays;		// количество воспросизведений
+	int m_price;				// цена
 
 	// конструктор без параметров
 	MusicStuff()
-		:m_storage(Storage(0)), m_serial_number(0), m_name(nullptr),
+		:m_storage(""), m_serial_number(0), m_name(""),
 		m_artist_name(), m_sound_time(0),
 		m_number_of_plays(0), m_price(0)
-	{}
+	{
+	}
 
 	// конструктор с параметрами
 	MusicStuff(
-		Storage _st, int _sn, char* _name,
+		string _st, int _sn, string _name,
 		NameSurname _an, int _stime, int _nop, int _price)
 		:m_storage(_st), m_serial_number(_sn), m_name(_name),
 		m_artist_name(_an), m_sound_time(_stime),
 		m_number_of_plays(_nop), m_price(_price)
-	{}
+	{
+	}
 
 	// деструктор
 	~MusicStuff()
 	{
-		// очистка динамической памяти 
-		if (m_name != nullptr)
-			delete m_name;
+	}
+
+	// оператор вывода в консоль
+	friend ostream& operator<<(ostream& _out_stream, const MusicStuff& _music_stuff)
+	{
+		_out_stream << _music_stuff.m_storage << " "
+			<< _music_stuff.m_serial_number << " "
+			<< _music_stuff.m_name << " "
+			<< _music_stuff.m_artist_name << " "
+			<< _music_stuff.m_sound_time << " "
+			<< _music_stuff.m_number_of_plays << " "
+			<< _music_stuff.m_price << endl;
+
+		return _out_stream;
 	}
 };
 
 // TODO: функция взаимодействия с пользователем
 
 // получение подстроки отделенной с помощью delim
-char* get_token(char* _str, char _delim)
+string GetToken(string& _str, char _delim = ':')
 {
 	// позиция делителя
-	int delim_pos = 0;
-
-	// поиск позиции делителя
-	for (; _str[delim_pos] != '\n'; delim_pos++)
-	{
-		if (_str[delim_pos] == _delim)
-			break;
-	}
+	int delim_pos = _str.find(':');
 
 	// строка с нужной подстрокой
-	char* new_str = new char[100];
-
 	// копирование нужной строки
-	strncpy(new_str, _str, delim_pos);
+	string new_str = _str.substr(0, delim_pos);
 
-	//...............
+	// сдвиг всех символов в начало
+	_str.erase(0, delim_pos + 1);
+
+	return new_str;
 }
 
 // функция создания записи о музыкальном товаре
-MusicStuff* AddMusicStaff(istream& _input_stream)
+MusicStuff AddMusicStaff(istream& _input_stream)
 {
 	// выделение памяти под объект который вернетсяв конце
-	MusicStuff* music_stuff = new MusicStuff;
+	MusicStuff music_stuff;
 
 	// Cтруктура данных при считывании из потока ввода должна выглядеть так
 	// Предполагается, что максимальная длина строки с данными не превышает
 	// 100 символов
 	// 
 	// <КОЛИЧЕСТВО СТРОК ДАННЫХ>
-	// <НОСИТЕЛЬ>:<ПОР.НОМЕР>:<НАЗВАНИЕ>:<ИСПОЛНИТЕЛЬ>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
+	// <НОСИТЕЛЬ>:<ПОР.НОМЕР>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛНЮ>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
 	// ....
-	// <НОСИТЕЛЬ>:<ПОР.НОМЕР>:<НАЗВАНИЕ>:<ИСПОЛНИТЕЛЬ>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
+	// <НОСИТЕЛЬ>:<ПОР.НОМЕР>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛНЮ>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
 	//
 
 	// количество строк данных
@@ -121,28 +125,55 @@ MusicStuff* AddMusicStaff(istream& _input_stream)
 	_input_stream.get();
 
 	// строка с веденной информацией
-	char* input_str = new char[100];
+	string input_str;
 
 	// считываем строки
 	for (int i = 0; i < number_of_string; i++)
 	{
 		// считывание инфорамции из потока
-		_input_stream.getline(input_str, 100, '\n');
+		getline(_input_stream, input_str);
+		input_str += ':';
 
-		// подстрока
-		char* substr;
-
-		//...............
+		// заполнение структуры MusicStuff
+		//music_stuff->m_storage = get_token(input_str);
+		//music_stuff->m_serial_number = atoi(get_token(input_str).c_str());
+		/*music_stuff = {
+			GetToken(input_str),
+			atoi(GetToken(input_str).c_str()),
+			GetToken(input_str),
+			NameSurname(GetToken(input_str),GetToken(input_str)),
+			atoi(GetToken(input_str).c_str()),
+			atoi(GetToken(input_str).c_str()),
+			atoi(GetToken(input_str).c_str())
+		};*/
+		music_stuff.m_storage = GetToken(input_str);
+		music_stuff.m_serial_number = atoi( GetToken(input_str).c_str());
+		music_stuff.m_name = GetToken(input_str);
+		music_stuff.m_artist_name = { GetToken(input_str), GetToken(input_str) };
+		music_stuff.m_sound_time = atoi(GetToken(input_str).c_str());
+		music_stuff.m_number_of_plays = atoi(GetToken(input_str).c_str());
+		music_stuff.m_price = atoi(GetToken(input_str).c_str());
 	}
-
-
-
-
-	return new MusicStuff;
+	return music_stuff;
 }
 
 int main()
 {
-	my_list<MusicStuff*> music_list;
+	setlocale(LC_ALL, "ru");
+
+	my_list<MusicStuff> music_list;
+
+	ifstream fin("../database/db.txt");
+
+	if (!fin.is_open())
+	{
+		cout << "file not found\n";
+		return -1;
+	}
+
+	music_list.push(AddMusicStaff(fin));
+
+	cout << music_list;
+
 	return 0;
 }
