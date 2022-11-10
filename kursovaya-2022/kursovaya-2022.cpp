@@ -1,8 +1,40 @@
 ﻿#include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
-//#include "../LW4-2022/LW4/LW4.hpp"
+
+// подключение файла со списком
 #include"../LW4/my_list/my_list.hpp"
+
+// заполнение len элементов элементом symb
+#define OUT_W(symb, len) fixed << setfill(symb) << setw(len)
+
+// шапка таблицы
+const string table_cap = "| НОМЕР | НОСИТЕЛЬ | НАЗВАНИЕ |\
+ ИМЯ/ФАМИЛИЯ ИСПОЛНИТЕЛЯ | ВРЕМЯ | КОЛ-ВО ВОСПР. | ЦЕНА |\n";
+
+// ширина полей таблицы при выводе
+const int width_of_fields[8] =
+{
+	7,10,10,12,13,7,15,6
+};
+
+// получение подстроки отделенной с помощью delim
+// и удаление этой подстроки из изначальной строки
+string GetToken(string& _str, char _delim = '║')
+{
+	// позиция делителя
+	int delim_pos = _str.find(':');
+
+	// строка с нужной подстрокой
+	// копирование нужной строки
+	string new_str = _str.substr(0, delim_pos);
+
+	// сдвиг всех символов в начало
+	_str.erase(0, delim_pos + 1);
+
+	return new_str;
+}
 
 // Структура ИМЯ ФАМИЛИЯ
 struct NameSurname
@@ -12,12 +44,12 @@ struct NameSurname
 
 	// конструктор по умолчанию
 	NameSurname()
-		:m_name(""), m_surname("")
+		:m_name("0"), m_surname("0")
 	{
 	}
 
 	// конструктор с параметрами
-	NameSurname(string _name, string _surname)
+	NameSurname(string _surname, string _name)
 		:m_name(_name), m_surname(_surname)
 	{
 	}
@@ -30,8 +62,9 @@ struct NameSurname
 	// оператор вывода
 	friend ostream& operator<<(ostream& _out_stream, const NameSurname& _name)
 	{
-		_out_stream << _name.m_name << " "
-			<< _name.m_surname;
+		_out_stream <<
+			OUT_W(' ', width_of_fields[3]) << _name.m_name <<
+			OUT_W(' ', width_of_fields[4]) << _name.m_surname;
 		return _out_stream;
 	}
 };
@@ -49,8 +82,8 @@ struct MusicStuff
 
 	// конструктор без параметров
 	MusicStuff()
-		:m_storage(""), m_serial_number(0), m_name(""),
-		m_artist_name(), m_sound_time(0),
+		:m_storage("0"), m_serial_number(0), m_name("0"),
+		m_artist_name(NameSurname()), m_sound_time(0),
 		m_number_of_plays(0), m_price(0)
 	{
 	}
@@ -65,6 +98,34 @@ struct MusicStuff
 	{
 	}
 
+	// конструктор считывающий данные из потока
+	MusicStuff(istream& _input_stream)
+	{
+		// Cтруктура данных при считывании из потока ввода должна выглядеть так
+		// Предполагается, что максимальная длина строки с данными не превышает
+		// 100 символов
+		// 
+		// <ПОР.НОМЕР>:<НОСИТЕЛЬ>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛН.>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
+		// ....
+		// <ПОР.НОМЕР>:<НОСИТЕЛЬ>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛН.>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
+		//
+
+		// строка с веденной информацией
+		string input_str;
+
+		// считывание инфорамции из потока
+		getline(_input_stream, input_str);
+
+		// заполнение структуры MusicStuff
+		m_storage = GetToken(input_str += ':');
+		m_serial_number = atoi(GetToken(input_str).c_str());
+		m_name = GetToken(input_str);
+		m_artist_name = { GetToken(input_str), GetToken(input_str) };
+		m_sound_time = atoi(GetToken(input_str).c_str());
+		m_number_of_plays = atoi(GetToken(input_str).c_str());
+		m_price = atoi(GetToken(input_str).c_str());
+	}
+
 	// деструктор
 	~MusicStuff()
 	{
@@ -73,88 +134,32 @@ struct MusicStuff
 	// оператор вывода в консоль
 	friend ostream& operator<<(ostream& _out_stream, const MusicStuff& _music_stuff)
 	{
-		_out_stream << _music_stuff.m_storage << " "
-			<< _music_stuff.m_serial_number << " "
-			<< _music_stuff.m_name << " "
-			<< _music_stuff.m_artist_name << " "
-			<< _music_stuff.m_sound_time << " "
-			<< _music_stuff.m_number_of_plays << " "
-			<< _music_stuff.m_price << endl;
+		_out_stream
+			<< "|" << OUT_W(' ', width_of_fields[0]) << _music_stuff.m_serial_number
+			<< "|" << OUT_W(' ', width_of_fields[1]) << _music_stuff.m_storage
+			<< "|" << OUT_W(' ', width_of_fields[2]) << _music_stuff.m_name
+			<< "|" << _music_stuff.m_artist_name
+			<< "|" << OUT_W(' ', width_of_fields[5]) << _music_stuff.m_sound_time
+			<< "|" << OUT_W(' ', width_of_fields[6]) << _music_stuff.m_number_of_plays
+			<< "|" << OUT_W(' ', width_of_fields[7]) << _music_stuff.m_price
+			<< "|";
 
 		return _out_stream;
 	}
 };
 
+
+enum class input_codes
+{
+	file_read = 0,
+	console_read,
+	sort
+};
+
 // TODO: функция взаимодействия с пользователем
-
-// получение подстроки отделенной с помощью delim
-string GetToken(string& _str, char _delim = ':')
+void dialog()
 {
-	// позиция делителя
-	int delim_pos = _str.find(':');
 
-	// строка с нужной подстрокой
-	// копирование нужной строки
-	string new_str = _str.substr(0, delim_pos);
-
-	// сдвиг всех символов в начало
-	_str.erase(0, delim_pos + 1);
-
-	return new_str;
-}
-
-// функция создания записи о музыкальном товаре
-MusicStuff AddMusicStaff(istream& _input_stream)
-{
-	// выделение памяти под объект который вернетсяв конце
-	MusicStuff music_stuff;
-
-	// Cтруктура данных при считывании из потока ввода должна выглядеть так
-	// Предполагается, что максимальная длина строки с данными не превышает
-	// 100 символов
-	// 
-	// <КОЛИЧЕСТВО СТРОК ДАННЫХ>
-	// <НОСИТЕЛЬ>:<ПОР.НОМЕР>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛНЮ>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
-	// ....
-	// <НОСИТЕЛЬ>:<ПОР.НОМЕР>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛНЮ>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
-	//
-
-	// количество строк данных
-	int number_of_string;
-	_input_stream >> number_of_string;
-	_input_stream.get();
-
-	// строка с веденной информацией
-	string input_str;
-
-	// считываем строки
-	for (int i = 0; i < number_of_string; i++)
-	{
-		// считывание инфорамции из потока
-		getline(_input_stream, input_str);
-		input_str += ':';
-
-		// заполнение структуры MusicStuff
-		//music_stuff->m_storage = get_token(input_str);
-		//music_stuff->m_serial_number = atoi(get_token(input_str).c_str());
-		/*music_stuff = {
-			GetToken(input_str),
-			atoi(GetToken(input_str).c_str()),
-			GetToken(input_str),
-			NameSurname(GetToken(input_str),GetToken(input_str)),
-			atoi(GetToken(input_str).c_str()),
-			atoi(GetToken(input_str).c_str()),
-			atoi(GetToken(input_str).c_str())
-		};*/
-		music_stuff.m_storage = GetToken(input_str);
-		music_stuff.m_serial_number = atoi( GetToken(input_str).c_str());
-		music_stuff.m_name = GetToken(input_str);
-		music_stuff.m_artist_name = { GetToken(input_str), GetToken(input_str) };
-		music_stuff.m_sound_time = atoi(GetToken(input_str).c_str());
-		music_stuff.m_number_of_plays = atoi(GetToken(input_str).c_str());
-		music_stuff.m_price = atoi(GetToken(input_str).c_str());
-	}
-	return music_stuff;
 }
 
 int main()
@@ -163,6 +168,7 @@ int main()
 
 	my_list<MusicStuff> music_list;
 
+	// открытие файла
 	ifstream fin("../database/db.txt");
 
 	if (!fin.is_open())
@@ -171,7 +177,15 @@ int main()
 		return -1;
 	}
 
-	music_list.push(AddMusicStaff(fin));
+	// считывание данных
+	while (fin.peek() != EOF)
+	{
+		music_list.push(fin);
+	}
+
+	// печать списка
+	// <НОСИТЕЛЬ>:<ПОР.НОМЕР>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛНЮ>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
+	cout << table_cap;
 
 	cout << music_list;
 
