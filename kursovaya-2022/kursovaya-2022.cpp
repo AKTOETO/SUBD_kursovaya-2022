@@ -79,7 +79,7 @@ T input_and_check(T _min, T _max,
 
 // получение подстроки отделенной с помощью delim
 // и удаление этой подстроки из изначальной строки
-string GetToken(string& _str, char _delim = '║')
+string GetToken(string& _str, char _delim = ':')
 {
 	// позиция делителя
 	int delim_pos = _str.find(':');
