@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <fstream>
 #include <string>
+#include <Windows.h> // для считывания кириллицы
 
 // подключение файла со списком
 #include"../LW4/my_list/my_list.hpp"
@@ -11,6 +12,9 @@
 
 // путь до файла с базой данных
 const string db_file_path = "../database/db.txt";
+
+// файл с выводом программы
+const string output_data = "../database/log.txt";
 
 // шапка таблицы
 const string table_cap = "| НОМЕР | НОСИТЕЛЬ | НАЗВАНИЕ |\
@@ -23,18 +27,24 @@ const int width_of_fields[8] =
 };
 
 // строка с коммандами
-const char* command_str =
+const string command_str =
 "\nВведите номер комманды:\n\
 \t1. Выход.\n\
 \t2. Считать базу данных из файла.\n\
 \t3. Считать музыкальный товар из консоли.\n\
 \t4. Сортировать....\n\
-\t5. \n\
+\t5. Вывести базу данных.\n\
 \t6. \n\
 \t7. \n\
 \t8. \n\
 \t9. \n\
 \t10.";
+
+// строка с запросом места печати
+const string print_place_str =
+"\nПечать в:\n\
+\t1. Консоль.\n\
+\t2. Файл.";
 
 // коды для взаимодействия пользователья с программой
 enum class input_codes
@@ -42,39 +52,44 @@ enum class input_codes
 	exit = 1,
 	file_read,
 	console_read,
-	sort
+	sort,
+	print
+};
+
+// коды для места печати
+enum class print_codes
+{
+	console = 1,
+	file
 };
 
 // ввод и проверка значений
-template<typename T>
-T input_and_check(T _min, T _max,
-	const char* welcome_str,
-	const char* err_str = "Было введено некорректное значение")
+template<class T, class FUNC>
+T input_and_check(const FUNC _comp,
+	const string welcome_str, const string err_str
+	= "Было введено некорректное значение")
 {
 	// размер массива
-	T num;
+	T symb;
 
 	// вывод сообщения
 	cout << welcome_str << "\n";
-	cin >> num;
+	cin >> symb;
 
 	// если было введено некорректное значение
-	if (num > _max || num < _min) {
-		// если была введена не цифра
+	if (!_comp(symb)) {
+		// если была введено не то, что нужно было
 		if (cin.fail())
 		{
 			cin.clear();
 			cin.ignore(INT_MAX, '\n');
 		}
-
-		// отчистка консоли
-		//system("cls");
 		cout << err_str << "\n";
 
 		// рекурсивное обращение
-		num = input_and_check(_min, _max, welcome_str, err_str);
+		symb = input_and_check<T>(_comp, welcome_str, err_str);
 	}
-	return num;
+	return symb;
 }
 
 // получение подстроки отделенной с помощью delim
@@ -161,7 +176,6 @@ struct MusicStuff
 	{
 		// Cтруктура данных при считывании из потока ввода должна выглядеть так
 		// Предполагается, что максимальная длина строки с данными не превышает
-		// 100 символов
 		// 
 		// <ПОР.НОМЕР>:<НОСИТЕЛЬ>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛН.>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
 		// ....
@@ -175,8 +189,8 @@ struct MusicStuff
 		getline(_input_stream, input_str);
 
 		// заполнение структуры MusicStuff
-		m_storage = GetToken(input_str += ':');
 		m_serial_number = atoi(GetToken(input_str).c_str());
+		m_storage = GetToken(input_str += ':');
 		m_name = GetToken(input_str);
 		m_artist_name = { GetToken(input_str), GetToken(input_str) };
 		m_sound_time = atoi(GetToken(input_str).c_str());
@@ -227,11 +241,36 @@ void read_from_file(my_list<T>& _list)
 	}
 }
 
+// считывание списка из консоли
+template<class T>
+void read_from_console(my_list<T>& _list)
+{
+	// количество строк
+	int numb_str = input_and_check<int>([](int num)
+		{
+			return 0 <= num && num <= INT_MAX;
+		}, "Введите количество строк: ");
+	cout << "Вводите в таком порядке:\n\
+<ПОР.НОМЕР>:<НОСИТЕЛЬ>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛН.>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>\n";
+
+	cin.get();
+
+	// считывание данных
+	for (int i = 0; i < numb_str; i++)
+	{
+		_list.push(cin);
+	}
+}
+
+
 // функция взаимодействия с пользователем
 void dialog()
 {
 	// переменная содержащая коды действий
 	input_codes in_code;
+
+	// переменная содержащая коды места печати
+	print_codes print_code;
 
 	// список с музыкальными товарами
 	my_list<MusicStuff> music_list;
@@ -239,7 +278,12 @@ void dialog()
 	do
 	{
 		// запрос у пользователя следующих действий
-		in_code = input_codes(input_and_check(1, 10, command_str));
+		in_code = input_codes(input_and_check<int>(
+			[](int num)
+			{
+				return 1 <= num && num <= 10;
+			},
+			command_str));
 
 		// запуск соответствующих функций
 		switch (in_code)
@@ -255,16 +299,35 @@ void dialog()
 			break;
 
 		case input_codes::console_read:
-			INFO("Чтение из консоли");
+			INFO("Чтение из консоли.");
 			// <ПОР.НОМЕР>:<НОСИТЕЛЬ>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛН.>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
-
+			read_from_console(music_list);
 			break;
 
 		case input_codes::sort:
 			break;
 
+		case input_codes::print:
+			//TODO: НЕРАБОТАЕТ ВВОД ЕЩЕ
+			// запрос места печати (консоль, файл)
+			print_code = print_codes(input_and_check<int>([](int _prt_code)
+				{
+					return 1 <= _prt_code <= 2;
+				}, print_place_str));
+			// печатаем список, если он не пуст
+			if (music_list.get_size() != 0)
+			{
+				cout << table_cap;
+				cout << music_list;
+			}
+			else
+			{
+				INFO("Список пуст");
+			}
+			break;
+
 		default:
-			cout << "Неверный код\n";
+			INFO("Неверный код");
 			break;
 		}
 
@@ -275,28 +338,11 @@ int main()
 {
 	setlocale(LC_ALL, "ru");
 
-	my_list<MusicStuff> music_list;
+	// для считывания кириллицы
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
 
-	// открытие файла
-	ifstream fin("../database/db.txt");
-
-	if (!fin.is_open())
-	{
-		cout << "file not found\n";
-		return -1;
-	}
-
-	// считывание данных
-	while (fin.peek() != EOF)
-	{
-		music_list.push(fin);
-	}
-
-	// печать списка
-	// <НОСИТЕЛЬ>:<ПОР.НОМЕР>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛНЮ>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
-	cout << table_cap;
-
-	cout << music_list;
+	dialog();
 
 	return 0;
 }
