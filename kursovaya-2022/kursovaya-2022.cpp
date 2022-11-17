@@ -5,10 +5,14 @@
 #include <Windows.h> // для считывания кириллицы
 
 // подключение файла со списком
-#include"../LW4/my_list/my_list.hpp"
+#include"../list/my_list/my_list.hpp"
 
 // заполнение len элементов элементом symb
 #define OUT_W(symb, len) fixed << setfill(symb) << setw(len)
+
+// получение токена из строки и проерка этой строки
+#define GET_DATA(str) IsDataCorrect(GetToken(input_str))
+#define GET_INT_DATA(str) atoi(GET_DATA(str).c_str());
 
 // путь до файла с базой данных
 const string db_file_path = "../database/db.txt";
@@ -19,6 +23,9 @@ const string output_data = "../database/log.txt";
 // шапка таблицы
 const string table_cap = "| НОМЕР | НОСИТЕЛЬ | НАЗВАНИЕ |\
  ИМЯ/ФАМИЛИЯ ИСПОЛНИТЕЛЯ | ВРЕМЯ | КОЛ-ВО ВОСПР. | ЦЕНА |\n";
+
+// сообщение о некорректных данных
+const string not_correct_data = "----";
 
 // ширина полей таблицы при выводе
 const int width_of_fields[8] =
@@ -65,15 +72,15 @@ enum class print_codes
 
 // ввод и проверка значений
 template<class T, class FUNC>
-T input_and_check(const FUNC _comp,
-	const string welcome_str, const string err_str
+T input_and_check(const FUNC& _comp,
+	const string _welcome_str, const string _err_str
 	= "Было введено некорректное значение")
 {
 	// размер массива
 	T symb;
 
 	// вывод сообщения
-	cout << welcome_str << "\n";
+	cout << _welcome_str << "\n";
 	cin >> symb;
 
 	// если было введено некорректное значение
@@ -84,10 +91,10 @@ T input_and_check(const FUNC _comp,
 			cin.clear();
 			cin.ignore(INT_MAX, '\n');
 		}
-		cout << err_str << "\n";
+		cout << _err_str << "\n";
 
 		// рекурсивное обращение
-		symb = input_and_check<T>(_comp, welcome_str, err_str);
+		symb = input_and_check<T>(_comp, _welcome_str, _err_str);
 	}
 	return symb;
 }
@@ -109,6 +116,14 @@ string GetToken(string& _str, char _delim = ':')
 	return new_str;
 }
 
+// проверка на корректность данных
+string IsDataCorrect(const string& _str)
+{
+	// если строка не пустая, тогда возвращаем ее
+	// иначе вернем ошибочное сообщение
+	return (_str.length() ? _str : not_correct_data);
+}
+
 // Структура ИМЯ ФАМИЛИЯ
 struct NameSurname
 {
@@ -117,7 +132,7 @@ struct NameSurname
 
 	// конструктор по умолчанию
 	NameSurname()
-		:m_name("0"), m_surname("0")
+		:m_name(not_correct_data), m_surname(not_correct_data)
 	{
 	}
 
@@ -155,9 +170,13 @@ struct MusicStuff
 
 	// конструктор без параметров
 	MusicStuff()
-		:m_storage("0"), m_serial_number(0), m_name("0"),
-		m_artist_name(NameSurname()), m_sound_time(0),
-		m_number_of_plays(0), m_price(0)
+		:m_storage(not_correct_data),
+		m_serial_number(0),
+		m_name(not_correct_data),
+		m_artist_name(),
+		m_sound_time(0),
+		m_number_of_plays(0),
+		m_price(0)
 	{
 	}
 
@@ -187,15 +206,19 @@ struct MusicStuff
 
 		// считывание инфорамции из потока
 		getline(_input_stream, input_str);
+		input_str += ":";
 
-		// заполнение структуры MusicStuff
-		m_serial_number = atoi(GetToken(input_str).c_str());
-		m_storage = GetToken(input_str += ':');
-		m_name = GetToken(input_str);
-		m_artist_name = { GetToken(input_str), GetToken(input_str) };
-		m_sound_time = atoi(GetToken(input_str).c_str());
-		m_number_of_plays = atoi(GetToken(input_str).c_str());
-		m_price = atoi(GetToken(input_str).c_str());
+		// заполнение класса MusicStuff
+		m_serial_number = GET_INT_DATA(input_str);
+		m_storage = GET_DATA(input_str);
+		m_name = GET_DATA(input_str);
+		m_artist_name = {
+			GET_DATA(input_str),
+			GET_DATA(input_str)
+		};
+		m_sound_time = GET_INT_DATA(input_str);
+		m_number_of_plays = GET_INT_DATA(input_str);
+		m_price = GET_INT_DATA(input_str);
 	}
 
 	// деструктор
@@ -237,7 +260,14 @@ void read_from_file(my_list<T>& _list)
 	// считывание данных
 	while (fin.peek() != EOF)
 	{
-		_list.push(fin);
+		if (fin.peek() == '\n')
+		{
+			fin.get();
+		}
+		else
+		{
+			_list.push(fin);
+		}
 	}
 }
 
@@ -262,6 +292,22 @@ void read_from_console(my_list<T>& _list)
 	}
 }
 
+// печат в поток
+template<class T>
+void print_list_to_stream(ostream& _out_stream, const my_list<T>& list)
+{
+	//_out_stream << data;
+	// печатаем список, если он не пуст
+	if (list.get_size() != 0)
+	{
+		_out_stream << table_cap;
+		_out_stream << list;
+	}
+	else
+	{
+		INFO("Список пуст");
+	}
+}
 
 // функция взаимодействия с пользователем
 void dialog()
@@ -274,6 +320,14 @@ void dialog()
 
 	// список с музыкальными товарами
 	my_list<MusicStuff> music_list;
+
+	// файловый поток для печати отчетов программы в файл
+	ofstream fout(output_data);
+
+	if (!fout.is_open())
+	{
+		cout << "Файл " << output_data << " не был открыт\n";
+	}
 
 	do
 	{
@@ -308,23 +362,25 @@ void dialog()
 			break;
 
 		case input_codes::print:
-			//TODO: НЕРАБОТАЕТ ВВОД ЕЩЕ
 			// запрос места печати (консоль, файл)
 			print_code = print_codes(input_and_check<int>([](int _prt_code)
 				{
-					return 1 <= _prt_code <= 2;
+					return 1 <= _prt_code && _prt_code <= 2;
 				}, print_place_str));
-			// печатаем список, если он не пуст
-			if (music_list.get_size() != 0)
+
+			// печать в нужный поток
+			switch (print_code)
 			{
-				cout << table_cap;
-				cout << music_list;
+			case print_codes::console:
+				print_list_to_stream(cout, music_list);
+				break;
+			case print_codes::file:
+				print_list_to_stream(fout, music_list);
+				break;
+			default:
+				INFO("PRINT: неверный код потока");
+				break;
 			}
-			else
-			{
-				INFO("Список пуст");
-			}
-			break;
 
 		default:
 			INFO("Неверный код");
@@ -332,6 +388,9 @@ void dialog()
 		}
 
 	} while (in_code != input_codes::exit);
+
+	// закрытие файлового потока
+	fout.close();
 }
 
 int main()
