@@ -260,10 +260,13 @@ void read_from_file(my_list<T>& _list)
 	// считывание данных
 	while (fin.peek() != EOF)
 	{
+		// пропуск ненужных переводов строк
 		if (fin.peek() == '\n')
 		{
 			fin.get();
 		}
+		// если не нашли переход строки
+		// (строка не пустая)
 		else
 		{
 			_list.push(fin);
