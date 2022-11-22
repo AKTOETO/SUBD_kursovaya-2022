@@ -18,11 +18,25 @@
     <ClCompile Include="kursovaya-2022.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="menu\menu.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\database\db.txt" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\database\log.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="menu\menu.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="support_func\support_func.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="constants.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

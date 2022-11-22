@@ -128,12 +128,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="kursovaya-2022.cpp" />
+    <ClCompile Include="menu\menu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\database\db.txt" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\database\log.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="constants.h" />
+    <ClInclude Include="menu\menu.h" />
+    <ClInclude Include="support_func\support_func.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
