@@ -48,22 +48,27 @@ inline bool IsCyrillic(char _symb)
 
 // получение подстроки отделенной с помощью delim
 // и удаление этой подстроки из изначальной строки
-inline string GetToken(string& _str, char _delim = ':')
+inline string GetToken(string& _str, char _delim = ' ')
 {
 	// позици€ делител€
-	int delim_pos = _str.find(_delim);
+	size_t delim_pos = _str.find(_delim);
+
+	// если делитель не был найден, переносим всю строку
+	if (delim_pos == -1)
+	{
+		delim_pos = _str.size();
+	}
 
 	// строка с нужной подстрокой
 	// копирование нужной строки
 	string new_str = _str.substr(0, delim_pos);
 
 	// сдвиг всех символов в начало
-	_str.erase(0, (delim_pos == INT_MAX - 1 ? delim_pos : delim_pos + 1));
+	_str.erase(0, delim_pos + 1);
 
 	return new_str;
 }
 
-//бог         123                321
 /// <summary>
 /// ѕодготовка строки дл€ получени€ из нее слов
 /// </summary>
@@ -98,25 +103,25 @@ inline void RemoveUnnecessarySpaces(string& _str)
 	{
 		_str.erase(0, 1);
 	}
-
-	// добавление _delim в конец
-	// нужно дл€ корректной работы алгоритма удалени€
-	_str += ' ';
 }
 
 /// <summary>
 /// ѕеревод строки в нижний регистр
 /// </summary>
 /// <param name="_str"> —трока, которую нужно перевести в нижний регистр</param>
-/// <returns></returns>
+/// <returns>¬ернет строку в нижнем регистре</returns>
 inline string ToLowerCase(const string _str)
 {
 	string out;
 	for (int i = 0; i < _str.length(); i++)
 	{
-		if (IsCyrillic)
+		if (IsCyrillic(_str[i]) && _str[i] < 'а')
 		{
 			out += (char(_str[i] + 32));
+		}
+		else
+		{
+			out += tolower(_str[i]);
 		}
 	}
 	return out;
@@ -126,13 +131,13 @@ inline string ToLowerCase(const string _str)
 /// ѕеревод строки в верхний регистр
 /// </summary>
 /// <param name="_str"> —трока, которую нужно перевести в верхний регистр</param>
-/// <returns></returns>
+/// <returns>¬ернет строку в верхнем регистре</returns>
 inline string ToUpperCase(const string _str)
 {
 	string out;
 	for (int i = 0; i < _str.length(); i++)
 	{
-		if (IsCyrillic(_str[i]))
+		if (IsCyrillic(_str[i]) >= 'а')
 		{
 			out += (char(_str[i] - 32));
 		}
@@ -169,4 +174,48 @@ inline void CutLogoToFrames(int numb_of_column = 82, int numb_of_str = 9)
 
 		fout.close();
 	}
+}
+
+/// <summary>
+/// ѕровер€ет, €вл€етс€ ли введенна€ строка командой —”Ѕƒ
+/// </summary>
+/// <param name="_command">введенна€ строка</param>
+/// <returns>€вл€етс€ или не €вл€едс€ командой</returns>
+inline bool IsCommandCorrect(const string& _command)
+{
+	// проходимс€ по массиву команд
+	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
+	{
+		// если нашли совпадающую команду
+		// выводим 1
+		if (ALL_COMMANDS[i] == _command)
+		{
+			return true;
+		}
+	}
+
+	// иначе выводим 0
+	return false;
+}
+
+/// <summary>
+/// ѕолучение номера команды в массиве
+/// </summary>
+/// <param name="_command">введенна€ команда</param>
+/// <returns>≈сли така€ команда существует вернет номер в массиве, иначе вернет -1</returns>
+inline int GetNumberOfCommand(const string& _command)
+{
+	// проходимс€ по массиву команд
+	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
+	{
+		// если нашли совпадающую команду
+		// выводим i
+		if (ALL_COMMANDS[i] == _command)
+		{
+			return i;
+		}
+	}
+
+	// иначе -1
+	return -1;
 }

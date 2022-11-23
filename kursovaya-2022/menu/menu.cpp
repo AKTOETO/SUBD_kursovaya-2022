@@ -18,6 +18,15 @@ void ProgramMenu()
 	// строка с введенными аттрибутами команды
 	string input_attributes;
 
+	// функции проверки атрибутов для введенных команд
+	void(*CHECK_ATTRIBUTES_FUNCTIONS[NUMBERS_OF_COMMANDS])(string) =
+	{
+		CheckExit,
+		CheckHelp,
+		CheckReadData,
+		CheckPrintData,
+	};
+
 	// цикл выполнения программы
 	do
 	{
@@ -30,32 +39,25 @@ void ProgramMenu()
 		// подготовка строки для получения слов из нее
 		RemoveUnnecessarySpaces(input_all_command);
 
+		// перевод строки в нижний регистр
+		input_all_command = ToLowerCase(input_all_command);
+
 		// получение только команды (без атрибутов)
 		input_first_command = GetToken(input_all_command, ' ');
 
-		// если не был введен выход
-		if (input_first_command != ALL_COMMANDS[0])
+		// если введенное слово является командой и не был введен выход 
+		if (
+			IsCommandCorrect(input_first_command) &&
+			input_first_command != ALL_COMMANDS[0]
+			)
 		{
-			// если введена команда ПОМОЩЬ
-			if (input_first_command == ALL_COMMANDS[1])
-			{
-				// если аргументы не были переданы
-				// тогда выводим все команды и информацию по ним
-				if (!input_all_command.size())
-				{
-					for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
-					{
-						cout << ToUpperCase(ALL_COMMANDS[i])
-							<< "\t\t" << SHORT_COMM_DESCRIPTION[i]
-							<< endl;
-					}
-				}
-				else
-				{
-					//TODO
-				}
-			}
-
+			//вызов необходимой функции для команды
+			CHECK_ATTRIBUTES_FUNCTIONS[GetNumberOfCommand(input_first_command)](input_all_command);
+		}
+		// если была введена не команда
+		else if (input_first_command != ALL_COMMANDS[0])
+		{
+			cout << "\t" << input_first_command << NOT_CORRECT_COMMAND;
 		}
 
 	} while (input_first_command != ALL_COMMANDS[0]);
@@ -63,7 +65,7 @@ void ProgramMenu()
 
 // отображение логотипа
 void ShowLogo()
-{	
+{
 	ifstream fin;
 	int numb_of_frame = 1;
 	do
@@ -83,4 +85,54 @@ void ShowLogo()
 
 		Sleep(TIME_TO_SHOW_FRAME);
 	} while (fin.is_open());
+}
+
+// проверка команды выход
+void CheckExit(string _str)
+{
+	// параметров у нее нат, так что их 
+	// не надо проверять 
+}
+
+// проверка команды ПОМОЩЬ
+void CheckHelp(string _str)
+{
+	// если аргументы не были переданы
+	// тогда выводим все команды и информацию по ним
+	if (_str.size() == 0)
+	{
+		for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
+		{
+			cout << ToUpperCase(ALL_COMMANDS[i])
+				<< "\t\t" << SHORT_COMM_DESCRIPTION[i]
+				<< endl;
+		}
+	}
+	// если есть какие-то аргументы
+	else
+	{
+		// если этот аргумент - команда
+		// выводим подробную инфу по ней
+		if (IsCommandCorrect(_str))
+		{
+			cout << DETAILED_COMMAND_DESCRIPTION[
+				GetNumberOfCommand(_str)
+			] << endl;
+		}
+		// если такого аргумента не существует
+		else
+		{
+			cout << "\t" << _str << NOT_CORRECT_ARGUMENT;
+		}
+	}
+}
+
+// проверка команды	ЧТЕНИЕДАННЫХ
+void CheckReadData(string _str)
+{
+}
+
+// проверка команды	ПЕЧАТЬДАННЫХ
+void CheckPrintData(string _str)
+{
 }
