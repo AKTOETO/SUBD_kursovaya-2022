@@ -23,12 +23,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\database\db.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\database\log.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="menu\menu.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>

@@ -357,6 +357,8 @@ int main()
 
 	//dialog();
 	ProgramMenu();
-
+	//CutLogoToFrames();
+	
+	
 	return 0;
 }
