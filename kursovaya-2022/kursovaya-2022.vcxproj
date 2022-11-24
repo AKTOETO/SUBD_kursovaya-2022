@@ -129,8 +129,10 @@
   <ItemGroup>
     <ClCompile Include="kursovaya-2022.cpp" />
     <ClCompile Include="menu\menu.cpp" />
+    <ClCompile Include="command\command.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="command\command.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="menu\menu.h" />
     <ClInclude Include="support_func\support_func.hpp" />

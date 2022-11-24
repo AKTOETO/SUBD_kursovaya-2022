@@ -355,9 +355,8 @@ int main()
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	//dialog();
-	ProgramMenu();
-	//CutLogoToFrames();
-	
+	Menu mn;
+	mn.ProgramMenu();
+
 	return 0;
 }

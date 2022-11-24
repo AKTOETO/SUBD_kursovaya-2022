@@ -1,6 +1,33 @@
 ﻿#include "menu.h"
 
-void ProgramMenu()
+Menu::Menu()
+{
+	// выделение памяти под массив с описанием функций
+	m_command = new command * [NUMBERS_OF_COMMANDS];
+
+	// чтение команд из файлов
+	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
+	{
+		m_command[i] = new command(COMMAND_DESCRIPTION_FILES[i]);
+	}
+
+	// заполнение массива функций обработки команд
+	m_command[0]->m_check_func = &Menu::CheckExit;
+	m_command[1]->m_check_func = &Menu::CheckHelp;
+	m_command[2]->m_check_func = &Menu::CheckReadData;
+	m_command[3]->m_check_func = &Menu::CheckPrintData;
+}
+
+Menu::~Menu()
+{
+	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
+	{
+		delete m_command[i];
+	}
+	delete[] m_command;
+}
+
+void Menu::ProgramMenu()
 {
 	// нужно ли показывать логотип
 #ifdef SHOW_LOGO
@@ -17,15 +44,6 @@ void ProgramMenu()
 	string input_first_command;
 	// строка с введенными аттрибутами команды
 	string input_attributes;
-
-	// функции проверки атрибутов для введенных команд
-	void(*CHECK_ATTRIBUTES_FUNCTIONS[NUMBERS_OF_COMMANDS])(string) =
-	{
-		CheckExit,
-		CheckHelp,
-		CheckReadData,
-		CheckPrintData,
-	};
 
 	// цикл выполнения программы
 	do
@@ -48,23 +66,57 @@ void ProgramMenu()
 		// если введенное слово является командой и не был введен выход 
 		if (
 			IsCommandCorrect(input_first_command) &&
-			input_first_command != ALL_COMMANDS[0]
+			input_first_command != CMD_NAME(0)
 			)
 		{
 			//вызов необходимой функции для команды
-			CHECK_ATTRIBUTES_FUNCTIONS[GetNumberOfCommand(input_first_command)](input_all_command);
+			CMD_CHK_FUNC(input_first_command, input_all_command);
 		}
 		// если была введена не команда
-		else if (input_first_command != ALL_COMMANDS[0])
+		else if (input_first_command != CMD_NAME(0))
 		{
 			cout << "\t" << input_first_command << NOT_CORRECT_COMMAND;
 		}
 
-	} while (input_first_command != ALL_COMMANDS[0]);
+	} while (input_first_command != CMD_NAME(0));
+}
+
+bool Menu::IsCommandCorrect(const string& _command)
+{
+	// проходимся по массиву команд
+	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
+	{
+		// если нашли совпадающую команду
+		// выводим 1
+		if (CMD_NAME(i) == _command)
+		{
+			return true;
+		}
+	}
+
+	// иначе выводим 0
+	return false;
+}
+
+int Menu::GetNumberOfCommand(const string& _command)
+{
+	// проходимся по массиву команд
+	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
+	{
+		// если нашли совпадающую команду
+		// выводим i
+		if (CMD_NAME(i) == _command)
+		{
+			return i;
+		}
+	}
+
+	// иначе -1
+	return -1;
 }
 
 // отображение логотипа
-void ShowLogo()
+void Menu::ShowLogo()
 {
 	ifstream fin;
 	int numb_of_frame = 1;
@@ -88,14 +140,14 @@ void ShowLogo()
 }
 
 // проверка команды выход
-void CheckExit(string _str)
+void Menu::CheckExit(string _str)
 {
 	// параметров у нее нат, так что их 
 	// не надо проверять 
 }
 
 // проверка команды ПОМОЩЬ
-void CheckHelp(string _str)
+void Menu::CheckHelp(string _str)
 {
 	// если аргументы не были переданы
 	// тогда выводим все команды и информацию по ним
@@ -103,8 +155,8 @@ void CheckHelp(string _str)
 	{
 		for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
 		{
-			cout << ToUpperCase(ALL_COMMANDS[i])
-				<< "\t\t" << SHORT_COMM_DESCRIPTION[i]
+			cout << ToUpperCase(CMD_NAME(i))
+				<< "\t\t" << CMD_SH_DECR(i)
 				<< endl;
 		}
 	}
@@ -115,24 +167,22 @@ void CheckHelp(string _str)
 		// выводим подробную инфу по ней
 		if (IsCommandCorrect(_str))
 		{
-			cout << DETAILED_COMMAND_DESCRIPTION[
-				GetNumberOfCommand(_str)
-			] << endl;
+			cout << CMD_FL_DECR(GetNumberOfCommand(_str)) << endl;
 		}
 		// если такого аргумента не существует
 		else
 		{
-			cout << "\t" << _str << NOT_CORRECT_ARGUMENT;
+			cout << "\t" << _str << NOT_CORRECT_COMMAND;
 		}
 	}
 }
 
 // проверка команды	ЧТЕНИЕДАННЫХ
-void CheckReadData(string _str)
+void Menu::CheckReadData(string _str)
 {
 }
 
 // проверка команды	ПЕЧАТЬДАННЫХ
-void CheckPrintData(string _str)
+void Menu::CheckPrintData(string _str)
 {
 }
