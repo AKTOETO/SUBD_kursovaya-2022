@@ -47,7 +47,9 @@ const string COMMAND_DESCRIPTION_FILES[NUMBERS_OF_COMMANDS] =
 };
 
 // сообщение об ошибочном вводе команды
-const string NOT_CORRECT_COMMAND = " такой команды не существует\n";
+const string NOT_CORRECT_COMMAND = " такой команды не существует\n\
+Если неизвестны команды, введите: помощь\n\
+Если не знаете, как пользоваться командой, введите: помощь <неизвестная команда>";
 
 // сообщение о некорректных данных
 const string not_correct_data = "----";
@@ -55,12 +57,19 @@ const string not_correct_data = "----";
 // путь до файла с базой данных
 const string db_file_path = "assets/db.txt";
 
+// файл с выводом программы
+const string db_output_path = "assets/subd_log.txt";
+
 // заполнение len элементов элементом symb
 #define OUT_W(symb, len) fixed << setfill(symb) << setw(len)
 
 // получение токена из строки и проерка этой строки
 #define GET_DATA(str) IsStringNotEmpty(GetToken(str,':'))
 #define GET_INT_DATA(str) atoi(GET_DATA(str).c_str());
+
+// шапка таблицы
+const string table_cap = "| НОМЕР | НОСИТЕЛЬ | НАЗВАНИЕ |\
+ ИМЯ/ФАМИЛИЯ ИСПОЛНИТЕЛЯ | ВРЕМЯ | КОЛ-ВО ВОСПР. | ЦЕНА |\n";
 
 // ширина полей таблицы при выводе
 const int width_of_fields[8] =

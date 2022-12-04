@@ -186,8 +186,10 @@ void Menu::CheckReadData(string _str)
 
 	// проверка места считывания информации
 	// из файла
-	if (temp == "-ф")
+	if (temp == "-ф" || !temp.length())
 	{
+		INFO("Чтение из файла");
+
 		// проверка на наличие файлового пути
 		temp = GetToken(_str);
 
@@ -232,4 +234,44 @@ void Menu::CheckReadData(string _str)
 // проверка команды	ПЕЧАТЬДАННЫХ
 void Menu::CheckPrintData(string _str)
 {
+	// место вывода информации
+	string temp = GetToken(_str);
+
+	// создаем файловый поток и
+	// выводим информацию туда
+	ofstream fout;
+
+	// проверка места вывода информации
+	// в файла
+	if (temp == "-ф")
+	{
+		INFO("Печать в файл");
+
+		// проверка на наличие файлового пути
+		temp = GetToken(_str);
+
+		// если путь до файла не указан
+		// используем стандартный путь
+		if (temp.length() == 0)
+		{
+			INFO("Использование стандартного файла " + db_output_path);
+			temp = db_output_path;
+		}
+
+		m_music_list.ReadablePrintToStream(fout);		
+
+		// закрытие файла
+		fout.close();
+	}
+	// в консоли
+	else if (temp == "-к" || !temp.length())
+	{
+		//TODO
+		m_music_list.ReadablePrintToStream(cout);
+	}
+	else
+	{
+		INFO("CHECKPRINTDATA: неизвестный ключ: \"" + temp + "\"");
+	}
+
 }

@@ -49,4 +49,14 @@ void MusicStuffList::ReadFromFile(ifstream& _read_stream)
 
 void MusicStuffList::ReadablePrintToStream(ostream& _out_stream)
 {
+	// печатаем список, если он не пуст
+	if (m_list_ms.get_size() != 0)
+	{
+		_out_stream << table_cap;
+		_out_stream << m_list_ms;
+	}
+	else
+	{
+		INFO("Список пуст");
+	}
 }
