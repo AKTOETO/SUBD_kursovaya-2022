@@ -5,9 +5,9 @@
 #include "../support_func/support_func.hpp"
 #include "../constants.h"
 #include "../command/command.h"
+#include "../db_mng_sys/music_stuff_list/music_stuff_list.h"
 #include <fstream>
 #include <Windows.h>
-
 
 struct Menu
 {
@@ -27,6 +27,9 @@ struct Menu
 #define CMD_SH_DECR(num) m_command[num].m_short_description
 #define CMD_FL_DECR(num) m_command[num].m_full_description
 #define CMD_CHK_FUNC(in_name, in_arg) (this->*m_command[GetNumberOfCommand(in_name)].m_check_func)(in_arg)
+
+	// Список музыкальных товаров
+	MusicStuffList m_music_list;
 
 	// конструктор и деструктор
 	Menu();

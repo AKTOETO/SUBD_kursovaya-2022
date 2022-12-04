@@ -5,8 +5,12 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
+
+// вывод в консоль сообщения
+#define INFO(str) cout<<"\t"<<str<<"\n";
 
 // Показывать логотип в начале
 // Если не нужно показывать, закоментировать строку
@@ -42,6 +46,24 @@ const string COMMAND_DESCRIPTION_FILES[NUMBERS_OF_COMMANDS] =
 	"print.txt"
 };
 
-
 // сообщение об ошибочном вводе команды
-const string NOT_CORRECT_COMMAND = " - такой команды не существует\n";
+const string NOT_CORRECT_COMMAND = " такой команды не существует\n";
+
+// сообщение о некорректных данных
+const string not_correct_data = "----";
+
+// путь до файла с базой данных
+const string db_file_path = "assets/db.txt";
+
+// заполнение len элементов элементом symb
+#define OUT_W(symb, len) fixed << setfill(symb) << setw(len)
+
+// получение токена из строки и проерка этой строки
+#define GET_DATA(str) IsStringNotEmpty(GetToken(str,':'))
+#define GET_INT_DATA(str) atoi(GET_DATA(str).c_str());
+
+// ширина полей таблицы при выводе
+const int width_of_fields[8] =
+{
+	7,10,10,12,13,7,15,6
+};

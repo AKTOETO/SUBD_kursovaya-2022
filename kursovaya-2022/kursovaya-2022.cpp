@@ -5,80 +5,80 @@
 #include <string>
 #include <Windows.h> // для считывания кириллицы
 
-//// подключение файла со списком
-//#include"../list/my_list/my_list.hpp"
-//
+// подключение файла со списком
+#include"../list/my_list/my_list.hpp"
+
 //// заполнение len элементов элементом symb
 //#define OUT_W(symb, len) fixed << setfill(symb) << setw(len)
-//
+
 //// получение токена из строки и проерка этой строки
-//#define GET_DATA(str) IsDataCorrect(GetToken(input_str))
+//#define GET_DATA(str) IsStringNotEmpty(GetToken(input_str))
 //#define GET_INT_DATA(str) atoi(GET_DATA(str).c_str());
 //
 //// путь до файла с базой данных
 //const string db_file_path = "../database/db.txt";
-//
-//// файл с выводом программы
-//const string output_data = "../database/log.txt";
-//
-//// шапка таблицы
-//const string table_cap = "| НОМЕР | НОСИТЕЛЬ | НАЗВАНИЕ |\
-// ИМЯ/ФАМИЛИЯ ИСПОЛНИТЕЛЯ | ВРЕМЯ | КОЛ-ВО ВОСПР. | ЦЕНА |\n";
-//
+
+// файл с выводом программы
+const string output_data = "../database/log.txt";
+
+// шапка таблицы
+const string table_cap = "| НОМЕР | НОСИТЕЛЬ | НАЗВАНИЕ |\
+ ИМЯ/ФАМИЛИЯ ИСПОЛНИТЕЛЯ | ВРЕМЯ | КОЛ-ВО ВОСПР. | ЦЕНА |\n";
+
 //// сообщение о некорректных данных
 //const string not_correct_data = "----";
-//
+
 //// ширина полей таблицы при выводе
 //const int width_of_fields[8] =
 //{
 //	7,10,10,12,13,7,15,6
 //};
-//
-//// строка с коммандами
-//const string command_str =
-//"\nВведите номер комманды:\n\
-//\t1. Выход.\n\
-//\t2. Считать базу данных из файла.\n\
-//\t3. Считать музыкальный товар из консоли.\n\
-//\t4. Сортировать....\n\
-//\t5. Вывести базу данных.\n\
-//\t6. \n\
-//\t7. \n\
-//\t8. \n\
-//\t9. \n\
-//\t10.";
-//
-//// строка с запросом места печати
-//const string print_place_str =
-//"\nПечать в:\n\
-//\t1. Консоль.\n\
-//\t2. Файл.";
-//
-//// коды для взаимодействия пользователья с программой
-//enum class input_codes
-//{
-//	exit = 1,
-//	file_read,
-//	console_read,
-//	sort,
-//	print
-//};
-//
-//// коды для места печати
-//enum class print_codes
-//{
-//	console = 1,
-//	file
-//};
-//
+
+// строка с коммандами
+const string command_str =
+"\nВведите номер комманды:\n\
+\t1. Выход.\n\
+\t2. Считать базу данных из файла.\n\
+\t3. Считать музыкальный товар из консоли.\n\
+\t4. Сортировать....\n\
+\t5. Вывести базу данных.\n\
+\t6. \n\
+\t7. \n\
+\t8. \n\
+\t9. \n\
+\t10.";
+
+// строка с запросом места печати
+const string print_place_str =
+"\nПечать в:\n\
+\t1. Консоль.\n\
+\t2. Файл.";
+
+// коды для взаимодействия пользователья с программой
+enum class input_codes
+{
+	exit = 1,
+	file_read,
+	console_read,
+	sort,
+	print
+};
+
+// коды для места печати
+enum class print_codes
+{
+	console = 1,
+	file
+};
+
 //// проверка на корректность данных
-//string IsDataCorrect(const string& _str)
+//string IsStringNotEmpty(const string& _str)
 //{
 //	// если строка не пустая, тогда возвращаем ее
 //	// иначе вернем ошибочное сообщение
 //	return (_str.length() ? _str : not_correct_data);
 //}
-//
+
 //// Структура ИМЯ ФАМИЛИЯ
 //struct NameSurname
 //{
@@ -111,7 +111,7 @@
 //		return _out_stream;
 //	}
 //};
-//
+
 //// Структура данных МУЗЫКАЛЬНЫЙ ТОВАР
 //struct MusicStuff
 //{
@@ -197,38 +197,38 @@
 //		return _out_stream;
 //	}
 //};
-//
-//// считывание списка из файла
-//template<class T>
-//void read_from_file(my_list<T>& _list)
-//{
-//	// открытие файла
-//	ifstream fin(db_file_path);
-//
-//	// если файл не был открыт
-//	if (!fin.is_open())
-//	{
-//		cout << "файл не был открыт\n";
-//		return;
-//	}
-//
-//	// считывание данных
-//	while (fin.peek() != EOF)
-//	{
-//		// пропуск ненужных переводов строк
-//		if (fin.peek() == '\n')
-//		{
-//			fin.get();
-//		}
-//		// если не нашли переход строки
-//		// (строка не пустая)
-//		else
-//		{
-//			_list.push(fin);
-//		}
-//	}
-//}
-//
+
+// считывание списка из файла
+template<class T>
+void read_from_file(my_list<T>& _list)
+{
+	// открытие файла
+	ifstream fin(db_file_path);
+
+	// если файл не был открыт
+	if (!fin.is_open())
+	{
+		cout << "файл не был открыт\n";
+		return;
+	}
+
+	// считывание данных
+	while (fin.peek() != EOF)
+	{
+		// пропуск ненужных переводов строк
+		if (fin.peek() == '\n')
+		{
+			fin.get();
+		}
+		// если не нашли переход строки
+		// (строка не пустая)
+		else
+		{
+			_list.push(fin);
+		}
+	}
+}
+
 //// считывание списка из консоли
 //template<class T>
 //void read_from_console(my_list<T>& _list)
@@ -249,23 +249,23 @@
 //		_list.push(cin);
 //	}
 //}
-//
-//// печат в поток
-//template<class T>
-//void print_readable_list_to_stream(ostream& _out_stream, const my_list<T>& list)
-//{
-//	// печатаем список, если он не пуст
-//	if (list.get_size() != 0)
-//	{
-//		_out_stream << table_cap;
-//		_out_stream << list;
-//	}
-//	else
-//	{
-//		INFO("Список пуст");
-//	}
-//}
-//
+
+// печат в поток
+template<class T>
+void print_readable_list_to_stream(ostream& _out_stream, const my_list<T>& list)
+{
+	// печатаем список, если он не пуст
+	if (list.get_size() != 0)
+	{
+		_out_stream << table_cap;
+		_out_stream << list;
+	}
+	else
+	{
+		INFO("Список пуст");
+	}
+}
+
 //// функция взаимодействия с пользователем
 //void dialog()
 //{

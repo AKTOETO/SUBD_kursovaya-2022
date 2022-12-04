@@ -127,6 +127,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="db_mng_sys\music_stuff\music_stuff.cpp" />
+    <ClCompile Include="db_mng_sys\music_stuff_list\music_stuff_list.cpp" />
+    <ClCompile Include="db_mng_sys\name_surname\name_surname.cpp" />
     <ClCompile Include="kursovaya-2022.cpp" />
     <ClCompile Include="menu\menu.cpp" />
     <ClCompile Include="command\command.cpp" />
@@ -134,6 +137,9 @@
   <ItemGroup>
     <ClInclude Include="command\command.h" />
     <ClInclude Include="constants.h" />
+    <ClInclude Include="db_mng_sys\music_stuff\music_stuff.h" />
+    <ClInclude Include="db_mng_sys\music_stuff_list\music_stuff_list.h" />
+    <ClInclude Include="db_mng_sys\name_surname\name_surname.h" />
     <ClInclude Include="menu\menu.h" />
     <ClInclude Include="support_func\support_func.hpp" />
   </ItemGroup>

@@ -69,6 +69,14 @@ inline string GetToken(string& _str, char _delim = ' ')
 	return new_str;
 }
 
+// проверка на корректность данных
+inline string IsStringNotEmpty(const string& _str)
+{
+	// если строка не пустая, тогда возвращаем ее
+	// иначе вернем ошибочное сообщение
+	return (_str.length() ? _str : not_correct_data);
+}
+
 /// <summary>
 /// Подготовка строки для получения из нее слов
 /// </summary>
@@ -137,7 +145,7 @@ inline string ToUpperCase(const string _str)
 	string out;
 	for (int i = 0; i < _str.length(); i++)
 	{
-		if (IsCyrillic(_str[i]) >= 'а')
+		if (IsCyrillic(_str[i]) && _str[i] >= 'а')
 		{
 			out += (char(_str[i] - 32));
 		}

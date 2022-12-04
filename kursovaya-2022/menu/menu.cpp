@@ -63,7 +63,8 @@ void Menu::ProgramMenu()
 			// получение только команды (без атрибутов)
 			input_first_command = GetToken(input_all_command, ' ');
 
-			// если введенное слово является командой и не был введен выход 
+			// если введенное слово является командой
+			// и не был введен выход 
 			if (
 				IsCommandCorrect(input_first_command) &&
 				input_first_command != CMD_NAME(0)
@@ -75,7 +76,7 @@ void Menu::ProgramMenu()
 			// если была введена не команда
 			else if (input_first_command != CMD_NAME(0))
 			{
-				cout << "\t" << input_first_command << NOT_CORRECT_COMMAND;
+				INFO("\""+input_first_command+"\"" + NOT_CORRECT_COMMAND);
 			}
 		}
 	} while (input_first_command != CMD_NAME(0));
@@ -180,6 +181,52 @@ void Menu::CheckHelp(string _str)
 // проверка команды	ЧТЕНИЕДАННЫХ
 void Menu::CheckReadData(string _str)
 {
+	// место считывания информации
+	string temp = GetToken(_str);
+
+	// проверка места считывания информации
+	// из файла
+	if (temp == "-ф")
+	{
+		// проверка на наличие файлового пути
+		temp = GetToken(_str);
+
+		// если путь до файла не указан
+		// используем стандартный путь
+		if (temp.length() == 0)
+		{
+			INFO("Использование стандартного файла " + db_file_path);
+			temp = db_file_path;
+		}
+
+		// создаем файловый поток и
+		// читаем информацию оттуда
+		ifstream fin(temp);
+
+		// если не удалось открыть файл
+		if (!fin.is_open())
+		{
+			// вывод сообщение об ошибке
+			INFO("Файл \"" + temp + "\" не был открыт");
+		}
+		// иначе записываем информацию из файлв в консоль
+		else
+		{
+			m_music_list.ReadFromFile(fin);
+		}
+
+		// закрытие файла
+		fin.close();
+	}
+	// из консоли
+	else if (temp == "-к")
+	{
+		//TODO
+	}
+	else
+	{
+		INFO("CHECKREADDATA: неизвестный ключ: \"" + temp+"\"");
+	}
 }
 
 // проверка команды	ПЕЧАТЬДАННЫХ
