@@ -8,7 +8,8 @@
 
 using namespace std;
 
-// показыват ли логотип
+// Показывать логотип в начале
+// Если не нужно показывать, закоментировать строку
 //#define SHOW_LOGO
 
 // логотип
@@ -22,9 +23,10 @@ const int TIME_TO_SHOW_FRAME = 10;
 const string DBMS_CONSOLE_REQUEST_COMMAND = "[СУБД v1.0]> ";
 
 // справка о программе
-const string DBMS_DESCRIPTION = 
+const string DBMS_DESCRIPTION =
 "СУБД была разработана Плоцким Богданом в качестве Курсовой Работы\n\
-После появления строки "+ DBMS_CONSOLE_REQUEST_COMMAND +
+После появления строки " +
+DBMS_CONSOLE_REQUEST_COMMAND +
 "начинайте вводить команды\n\
 Если неизвестны команды, введите \"помощь\"\n\n";
 

@@ -11,13 +11,6 @@
 
 struct Menu
 {
-	// Показывать логотип в начале
-	// Если не нужно показывать, закоментироват строку
-#define SHOW_LOGO
-
-	// создание типа данных указателя на функцию
-	typedef void (Menu::*funck_ptr)(string);
-
 	/* массив с командами
 	*	возможные коды управления СУБД
 	* 0 выход
@@ -27,13 +20,13 @@ struct Menu
 	* ...
 	* ...
 	**/	
-	command** m_command;
+	command* m_command;
 
 	// Для быстрого доступа к полям структуры
-#define CMD_NAME(num) m_command[num]->m_name
-#define CMD_SH_DECR(num) m_command[num]->m_short_description
-#define CMD_FL_DECR(num) m_command[num]->m_full_description
-#define CMD_CHK_FUNC(in_name, in_arg) (this->*m_command[GetNumberOfCommand(in_name)]->m_check_func)(in_arg)
+#define CMD_NAME(num) m_command[num].m_name
+#define CMD_SH_DECR(num) m_command[num].m_short_description
+#define CMD_FL_DECR(num) m_command[num].m_full_description
+#define CMD_CHK_FUNC(in_name, in_arg) (this->*m_command[GetNumberOfCommand(in_name)].m_check_func)(in_arg)
 
 	// конструктор и деструктор
 	Menu();

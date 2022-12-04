@@ -3,27 +3,23 @@
 Menu::Menu()
 {
 	// выделение памяти под массив с описанием функций
-	m_command = new command * [NUMBERS_OF_COMMANDS];
+	m_command = new command[NUMBERS_OF_COMMANDS];
 
 	// чтение команд из файлов
 	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
 	{
-		m_command[i] = new command(COMMAND_DESCRIPTION_FILES[i]);
+		m_command[i].FillCommandData(COMMAND_DESCRIPTION_FILES[i]);
 	}
 
 	// заполнение массива функций обработки команд
-	m_command[0]->m_check_func = &Menu::CheckExit;
-	m_command[1]->m_check_func = &Menu::CheckHelp;
-	m_command[2]->m_check_func = &Menu::CheckReadData;
-	m_command[3]->m_check_func = &Menu::CheckPrintData;
+	m_command[0].m_check_func = &Menu::CheckExit;
+	m_command[1].m_check_func = &Menu::CheckHelp;
+	m_command[2].m_check_func = &Menu::CheckReadData;
+	m_command[3].m_check_func = &Menu::CheckPrintData;
 }
 
 Menu::~Menu()
 {
-	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
-	{
-		delete m_command[i];
-	}
 	delete[] m_command;
 }
 
@@ -54,30 +50,34 @@ void Menu::ProgramMenu()
 		// считывание команды
 		getline(cin, input_all_command);
 
-		// подготовка строки для получения слов из нее
-		RemoveUnnecessarySpaces(input_all_command);
-
-		// перевод строки в нижний регистр
-		input_all_command = ToLowerCase(input_all_command);
-
-		// получение только команды (без атрибутов)
-		input_first_command = GetToken(input_all_command, ' ');
-
-		// если введенное слово является командой и не был введен выход 
-		if (
-			IsCommandCorrect(input_first_command) &&
-			input_first_command != CMD_NAME(0)
-			)
+		// если строка не пустая,
+		// тогда можно проверять ее на корректность
+		if (input_all_command.length() != 0)
 		{
-			//вызов необходимой функции для команды
-			CMD_CHK_FUNC(input_first_command, input_all_command);
-		}
-		// если была введена не команда
-		else if (input_first_command != CMD_NAME(0))
-		{
-			cout << "\t" << input_first_command << NOT_CORRECT_COMMAND;
-		}
+			// подготовка строки для получения слов из нее
+			RemoveUnnecessarySpaces(input_all_command);
 
+			// перевод строки в нижний регистр
+			input_all_command = ToLowerCase(input_all_command);
+
+			// получение только команды (без атрибутов)
+			input_first_command = GetToken(input_all_command, ' ');
+
+			// если введенное слово является командой и не был введен выход 
+			if (
+				IsCommandCorrect(input_first_command) &&
+				input_first_command != CMD_NAME(0)
+				)
+			{
+				//вызов необходимой функции для команды
+				CMD_CHK_FUNC(input_first_command, input_all_command);
+			}
+			// если была введена не команда
+			else if (input_first_command != CMD_NAME(0))
+			{
+				cout << "\t" << input_first_command << NOT_CORRECT_COMMAND;
+			}
+		}
 	} while (input_first_command != CMD_NAME(0));
 }
 
