@@ -1,48 +1,68 @@
 ﻿#include "command.h"
 
-command::command(string _file_name)
-	:m_path_to_file_msg_folder("assets/messages/"),
-	m_number_of_commands(3),
-	m_str_arr(new string* [m_number_of_commands]),
+Command::Command(string _file_name)
+	:m_path_to_cmd_descr_folder("assets/messages/"),
+	m_number_of_descriptions(3),
+	m_cmd_attributes(new string* [m_number_of_descriptions]),
 	m_check_func(nullptr)
 {
-	m_str_arr[0] = &m_name;
-	m_str_arr[1] = &m_short_description;
-	m_str_arr[2] = &m_full_description;
+	m_cmd_attributes[0] = &m_name;
+	m_cmd_attributes[1] = &m_short_description;
+	m_cmd_attributes[2] = &m_full_description;
 
 	FillCommandData(_file_name);
 }
 
-command::command()
-	:m_path_to_file_msg_folder("assets/messages/"),
-	m_number_of_commands(3),
-	m_str_arr(new string* [m_number_of_commands]),
+Command::Command()
+	:m_path_to_cmd_descr_folder("assets/messages/"),
+	m_number_of_descriptions(3),
+	m_cmd_attributes(new string* [m_number_of_descriptions]),
 	m_check_func(nullptr)
 {
-	m_str_arr[0] = &m_name;
-	m_str_arr[1] = &m_short_description;
-	m_str_arr[2] = &m_full_description;
+	m_cmd_attributes[0] = &m_name;
+	m_cmd_attributes[1] = &m_short_description;
+	m_cmd_attributes[2] = &m_full_description;
 }
 
-command::~command()
+Command::~Command()
 {
 }
 
-void command::FillCommandData(string _file_name)
+void Command::SetCheckFunction(CheckFunc _check_func)
 {
-	string file_path = m_path_to_file_msg_folder + _file_name;
+	m_check_func = _check_func;
+}
+
+Command::CheckFunc Command::GetCheckFunction() const
+{
+	return m_check_func;
+}
+
+string Command::GetAttribute(int _index) const
+{
+	if (0 <= _index && _index <= m_number_of_descriptions)
+	{
+		return *m_cmd_attributes[_index];
+	}
+	return "";
+}
+
+void Command::FillCommandData(string _file_name)
+{
+	string file_path = m_path_to_cmd_descr_folder + _file_name;
 
 	ifstream fin(file_path);
 	if (!fin)
 	{
 		cout << "\tFillCommandData: файл " << file_path << " не открылся\n";
+		return;
 	}
 
 	string temp;
 	int ind = 0; // индекс текущего заполняемого поля
 
 	// считывание данных из файла
-	while (fin.peek() != EOF && ind < m_number_of_commands)
+	while (fin.peek() != EOF && ind < m_number_of_descriptions)
 	{
 		// считывание строки
 		getline(fin, temp);
@@ -54,7 +74,7 @@ void command::FillCommandData(string _file_name)
 			temp = temp.substr(0, temp.size() - 1);
 
 			// сохраняем полученную строку
-			*m_str_arr[ind] += temp;
+			*m_cmd_attributes[ind] += temp;
 
 			// переходим к следующей команде
 			ind++;
@@ -62,12 +82,12 @@ void command::FillCommandData(string _file_name)
 		// если это не конец всей фразы
 		else
 		{
-			*m_str_arr[ind] += temp + '\n';
+			*m_cmd_attributes[ind] += temp + '\n';
 		}
 	}
 }
 
-ostream& operator<<(ostream& _out_stream, const command& _cmd)
+ostream& operator<<(ostream& _out_stream, const Command& _cmd)
 {
 	_out_stream << _cmd.m_name << endl
 		<< _cmd.m_short_description << endl

@@ -6,34 +6,46 @@
 using namespace std;
 
 // объ€вление струкутры меню
-struct Menu;
+class Menu;
 
 // структура, содержаща€ описание каждой команды
-struct command
+class Command
 {
-	int m_number_of_commands;	// количество команд
+	string m_path_to_cmd_descr_folder;	// путь до папки c описанием команд
+	int m_number_of_descriptions;	// количество команд
 
 	string m_name;				// им€ команды
 	string m_short_description;	// краткое описание
 	string m_full_description;	// полное описание
 
-	string** m_str_arr;			// массив с указател€ми на пол€ структуры
-
-	string m_path_to_file_msg_folder;	// путь до папки c описанием команд
+	string** m_cmd_attributes;	// массив с указател€ми на пол€ структуры
 
 	// указатель на функцию обработки
-	void (Menu::*m_check_func)(string);
+	typedef void (Menu::* CheckFunc)(string);
+	CheckFunc m_check_func;
 
+public:
 	// конструкторы
-	command(string _file_name);
-	command();
+	Command(string _file_name);
+	Command();
 
 	// деструктор
-	~command();
+	~Command();
+
+	// установить функцию обработки команды
+	void SetCheckFunction(CheckFunc);
+
+	// вернуть функцию обработки команды
+	// нужно дл€ вызова функции обработки извне
+	CheckFunc GetCheckFunction() const;
+
+	// получение атрибутов команды 
+	// (им€, короткое описание, полное описание)
+	string GetAttribute(int _index) const;
 
 	// заполнение команды данными из файла
 	void FillCommandData(string _file_name);
 
 	// оператор вывода
-	friend ostream& operator<<(ostream& _out_stream, const command& _cmd);
+	friend ostream& operator<<(ostream& _out_stream, const Command& _cmd);
 };

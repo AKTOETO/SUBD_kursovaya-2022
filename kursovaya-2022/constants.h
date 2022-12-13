@@ -20,9 +20,6 @@ using namespace std;
 const string PATH_TO_LOGO_FOLDER = "assets/logo_slides/";
 const string PATH_TO_LOGO = PATH_TO_LOGO_FOLDER + "logo.txt";
 
-// время отображения одного кадра логотипа
-const int TIME_TO_SHOW_FRAME = 10;
-
 // строка слева от введенной команды
 const string DBMS_CONSOLE_REQUEST_COMMAND = "[СУБД v1.0]> ";
 
@@ -49,16 +46,17 @@ const string COMMAND_DESCRIPTION_FILES[NUMBERS_OF_COMMANDS] =
 // сообщение об ошибочном вводе команды
 const string NOT_CORRECT_COMMAND = " такой команды не существует\n\
 Если неизвестны команды, введите: помощь\n\
-Если не знаете, как пользоваться командой, введите: помощь <неизвестная команда>";
+Если не знаете, как пользоваться командой, \
+введите: помощь <неизвестная команда>\n";
 
 // сообщение о некорректных данных
-const string not_correct_data = "----";
+const string NOT_CORRECT_DATA = "----";
 
 // путь до файла с базой данных
-const string db_file_path = "assets/db.txt";
+const string DB_FILE_PATH = "assets/db.txt";
 
 // файл с выводом программы
-const string db_output_path = "assets/subd_log.txt";
+const string DB_OUTPUT_PATH = "assets/subd_log.txt";
 
 // заполнение len элементов элементом symb
 #define OUT_W(symb, len) fixed << setfill(symb) << setw(len)

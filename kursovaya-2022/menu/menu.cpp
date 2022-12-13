@@ -3,7 +3,7 @@
 Menu::Menu()
 {
 	// выделение памяти под массив с описанием функций
-	m_command = new command[NUMBERS_OF_COMMANDS];
+	m_command = new Command[NUMBERS_OF_COMMANDS];
 
 	// чтение команд из файлов
 	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
@@ -12,10 +12,14 @@ Menu::Menu()
 	}
 
 	// заполнение массива функций обработки команд
-	m_command[0].m_check_func = &Menu::CheckExit;
-	m_command[1].m_check_func = &Menu::CheckHelp;
-	m_command[2].m_check_func = &Menu::CheckReadData;
-	m_command[3].m_check_func = &Menu::CheckPrintData;
+	m_command[0].SetCheckFunction(&Menu::CheckCMDExit);
+	m_command[1].SetCheckFunction(&Menu::CheckCMDHelp);
+	m_command[2].SetCheckFunction(&Menu::CheckCMDReadDB);
+	m_command[3].SetCheckFunction(&Menu::CheckCMDPrintDBToConsole);
+	/*m_command[0].m_check_func = &Menu::CheckCMDExit;
+	m_command[1].m_check_func = &Menu::CheckCMDHelp;
+	m_command[2].m_check_func = &Menu::CheckCMDReadDB;
+	m_command[3].m_check_func = &Menu::CheckCMDPrintDBToConsole;*/
 }
 
 Menu::~Menu()
@@ -25,11 +29,6 @@ Menu::~Menu()
 
 void Menu::ProgramMenu()
 {
-	// нужно ли показывать логотип
-#ifdef SHOW_LOGO
-	// вывод логотипа
-	ShowLogo();
-#endif
 
 	// вывод справки о программе
 	cout << DBMS_DESCRIPTION;
@@ -65,6 +64,7 @@ void Menu::ProgramMenu()
 
 			// если введенное слово является командой
 			// и не был введен выход 
+			
 			if (
 				IsCommandCorrect(input_first_command) &&
 				input_first_command != CMD_NAME(0)
@@ -116,39 +116,15 @@ int Menu::GetNumberOfCommand(const string& _command)
 	return -1;
 }
 
-// отображение логотипа
-void Menu::ShowLogo()
-{
-	ifstream fin;
-	int numb_of_frame = 1;
-	do
-	{
-		system("cls");
-		fin.close();
-		string path = PATH_TO_LOGO_FOLDER + to_string(numb_of_frame) + "_slide.txt";
-		fin.open(path);
-		string frame_text;
-
-		while (fin.peek() != EOF && fin.is_open())
-		{
-			getline(fin, frame_text);
-			cout << frame_text << endl;
-		}
-		numb_of_frame++;
-
-		Sleep(TIME_TO_SHOW_FRAME);
-	} while (fin.is_open());
-}
-
 // проверка команды выход
-void Menu::CheckExit(string _str)
+void Menu::CheckCMDExit(string _str)
 {
 	// параметров у нее нат, так что их 
 	// не надо проверять 
 }
 
 // проверка команды ПОМОЩЬ
-void Menu::CheckHelp(string _str)
+void Menu::CheckCMDHelp(string _str)
 {
 	// если аргументы не были переданы
 	// тогда выводим все команды и информацию по ним
@@ -168,7 +144,7 @@ void Menu::CheckHelp(string _str)
 		// выводим подробную инфу по ней
 		if (IsCommandCorrect(_str))
 		{
-			cout << CMD_FL_DECR(GetNumberOfCommand(_str)) << endl;
+			cout << CMD_FL_DESCR(GetNumberOfCommand(_str)) << endl;
 		}
 		// если такого аргумента не существует
 		else
@@ -179,7 +155,7 @@ void Menu::CheckHelp(string _str)
 }
 
 // проверка команды	ЧТЕНИЕДАННЫХ
-void Menu::CheckReadData(string _str)
+void Menu::CheckCMDReadDB(string _str)
 {
 	// место считывания информации
 	string temp = GetToken(_str);
@@ -197,8 +173,8 @@ void Menu::CheckReadData(string _str)
 		// используем стандартный путь
 		if (temp.length() == 0)
 		{
-			INFO("Использование стандартного файла " + db_file_path);
-			temp = db_file_path;
+			INFO("Использование стандартного файла " + DB_FILE_PATH);
+			temp = DB_FILE_PATH;
 		}
 
 		// создаем файловый поток и
@@ -214,7 +190,7 @@ void Menu::CheckReadData(string _str)
 		// иначе записываем информацию из файлв в консоль
 		else
 		{
-			m_music_list.ReadFromFile(fin);
+			m_music_list.ReadDBFromFile(fin);
 		}
 
 		// закрытие файла
@@ -232,46 +208,49 @@ void Menu::CheckReadData(string _str)
 }
 
 // проверка команды	ПЕЧАТЬДАННЫХ
-void Menu::CheckPrintData(string _str)
+void Menu::CheckCMDPrintDBToConsole(string _str)
 {
-	// место вывода информации
-	string temp = GetToken(_str);
+	// ДОЛЖНО БЫТЬ НЕ ТАК
+	// НАДО ПРОСТО ВЫВОДИТЬ В КОНСОЛЬ, НИЧЕГО
+	// НЕ ВЫБИРАЯ ИФАМИ
+	//// место вывода информации
+	//string temp = GetToken(_str);
 
-	// создаем файловый поток и
-	// выводим информацию туда
-	ofstream fout;
+	//// создаем файловый поток и
+	//// выводим информацию туда
+	//ofstream fout;
 
-	// проверка места вывода информации
-	// в файла
-	if (temp == "-ф")
-	{
-		INFO("Печать в файл");
+	//// проверка места вывода информации
+	//// в файла
+	//if (temp == "-ф")
+	//{
+	//	INFO("Печать в файл");
 
-		// проверка на наличие файлового пути
-		temp = GetToken(_str);
+	//	// проверка на наличие файлового пути
+	//	temp = GetToken(_str);
 
-		// если путь до файла не указан
-		// используем стандартный путь
-		if (temp.length() == 0)
-		{
-			INFO("Использование стандартного файла " + db_output_path);
-			temp = db_output_path;
-		}
+	//	// если путь до файла не указан
+	//	// используем стандартный путь
+	//	if (temp.length() == 0)
+	//	{
+	//		INFO("Использование стандартного файла " + DB_OUTPUT_PATH);
+	//		temp = DB_OUTPUT_PATH;
+	//	}
 
-		m_music_list.ReadablePrintToStream(fout);		
+	//	m_music_list.PrintDBToConsole(fout);		
 
-		// закрытие файла
-		fout.close();
-	}
-	// в консоли
-	else if (temp == "-к" || !temp.length())
-	{
-		//TODO
-		m_music_list.ReadablePrintToStream(cout);
-	}
-	else
-	{
-		INFO("CHECKPRINTDATA: неизвестный ключ: \"" + temp + "\"");
-	}
+	//	// закрытие файла
+	//	fout.close();
+	//}
+	//// в консоли
+	//else if (temp == "-к" || !temp.length())
+	//{
+	//	//TODO
+	//	m_music_list.PrintDBToConsole(cout);
+	//}
+	//else
+	//{
+	//	INFO("CHECKPRINTDATA: неизвестный ключ: \"" + temp + "\"");
+	//}
 
 }

@@ -57,4 +57,7 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="assets\db.txt" />
+  </ItemGroup>
 </Project>

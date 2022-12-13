@@ -74,7 +74,7 @@ inline string IsStringNotEmpty(const string& _str)
 {
 	// если строка не пустая, тогда возвращаем ее
 	// иначе вернем ошибочное сообщение
-	return (_str.length() ? _str : not_correct_data);
+	return (_str.length() ? _str : NOT_CORRECT_DATA);
 }
 
 /// <summary>

@@ -2,11 +2,13 @@
 #include "../../constants.h"
 
 // —труктура »ћя ‘јћ»Ћ»я
-struct NameSurname
+class NameSurname
 {
+private:
 	string m_name;
 	string m_surname;
 
+public:
 	// конструктор по умолчанию
 	NameSurname();
 

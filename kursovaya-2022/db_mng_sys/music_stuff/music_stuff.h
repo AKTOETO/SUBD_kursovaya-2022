@@ -2,8 +2,9 @@
 #include "../../support_func/support_func.hpp"
 #include "../name_surname/name_surname.h"
 
-struct MusicStuff
+class MusicStuff
 {
+private:
 	string m_storage;			// носитель
 	int m_serial_number;		// порядковый номер
 	string m_name;				// название
@@ -12,16 +13,13 @@ struct MusicStuff
 	int m_number_of_plays;		// количество воспросизведений
 	int m_price;				// цена
 
+public:
+
 	// конструктор без параметров
 	MusicStuff();
 
-	// конструктор с параметрами
-	MusicStuff(
-		string _st, int _sn, string _name,
-		NameSurname _an, int _stime, int _nop, int _price);
-
-	// конструктор считывающий данные из потока
-	MusicStuff(string& _input_stream);
+	// конструктор считывающий данные из строки
+	MusicStuff(string& _input_string);
 
 	// деструктор
 	~MusicStuff();

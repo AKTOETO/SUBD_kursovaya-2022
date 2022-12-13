@@ -1,29 +1,28 @@
 ﻿#include "music_stuff_list.h"
 
-MusicStuffList::MusicStuffList()
+DataBaseManager::DataBaseManager()
 {
 }
 
-void MusicStuffList::ReadFromConsole()
+void DataBaseManager::SaveDBToFile(string _file_path)
 {
-//	// количество строк
-//	int numb_str = input_and_check<int>([](int num)
-//		{
-//			return 0 <= num && num <= INT_MAX;
-//		}, "Введите количество строк: ");
-//	cout << "Вводите в таком порядке:\n\
-//<ПОР.НОМЕР>:<НОСИТЕЛЬ>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛН.>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>\n";
-//
-//	cin.get();
-//
-//	// считывание данных
-//	for (int i = 0; i < numb_str; i++)
-//	{
-//		m_list_ms.push(cin);
-//	}
 }
 
-void MusicStuffList::ReadFromFile(ifstream& _read_stream)
+void DataBaseManager::ResetDBFromDefaultDB()
+{
+}
+
+void DataBaseManager::ReadDBNodeFromString(string _str)
+{
+	// добавление элемента в список
+	m_default_db.push(_str);
+}
+
+void DataBaseManager::DeleteDBNode(string _str)
+{
+}
+
+void DataBaseManager::ReadDBFromFile(ifstream& _read_stream)
 {
 	// считывание данных
 	while (_read_stream.peek() != EOF)
@@ -42,21 +41,34 @@ void MusicStuffList::ReadFromFile(ifstream& _read_stream)
 			getline(_read_stream, data_str);
 
 			// записываем эту информацию в список
-			m_list_ms.push(data_str);
+			//m_default_db.push(data_str);
+			ReadDBNodeFromString(data_str);
 		}
 	}
 }
 
-void MusicStuffList::ReadablePrintToStream(ostream& _out_stream)
+void DataBaseManager::PrintDBToConsole(ostream& _out_stream)
 {
 	// печатаем список, если он не пуст
-	if (m_list_ms.get_size() != 0)
+	if (m_default_db.get_size() != 0)
 	{
 		_out_stream << table_cap;
-		_out_stream << m_list_ms;
+		_out_stream << m_default_db;
 	}
 	else
 	{
 		INFO("Список пуст");
 	}
+}
+
+void DataBaseManager::ClearDB()
+{
+}
+
+void DataBaseManager::SortDB(string _str)
+{
+}
+
+void DataBaseManager::SelectDB(string _str)
+{
 }

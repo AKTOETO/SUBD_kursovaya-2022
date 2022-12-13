@@ -1,20 +1,13 @@
 ﻿#include "music_stuff.h"
 
 MusicStuff::MusicStuff()
-	:m_storage(not_correct_data),
+	:m_storage(NOT_CORRECT_DATA),
 	m_serial_number(0),
-	m_name(not_correct_data),
+	m_name(NOT_CORRECT_DATA),
 	m_artist_name(),
 	m_sound_time(0),
 	m_number_of_plays(0),
 	m_price(0)
-{
-}
-
-MusicStuff::MusicStuff(string _st, int _sn, string _name, NameSurname _an, int _stime, int _nop, int _price)
-	:m_storage(_st), m_serial_number(_sn), m_name(_name),
-	m_artist_name(_an), m_sound_time(_stime),
-	m_number_of_plays(_nop), m_price(_price)
 {
 }
 

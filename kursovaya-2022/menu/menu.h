@@ -20,20 +20,23 @@ struct Menu
 	* ...
 	* ...
 	**/	
-	command* m_command;
-
-	// Для быстрого доступа к полям структуры
-#define CMD_NAME(num) m_command[num].m_name
-#define CMD_SH_DECR(num) m_command[num].m_short_description
-#define CMD_FL_DECR(num) m_command[num].m_full_description
-#define CMD_CHK_FUNC(in_name, in_arg) (this->*m_command[GetNumberOfCommand(in_name)].m_check_func)(in_arg)
+	Command* m_command;
 
 	// Список музыкальных товаров
-	MusicStuffList m_music_list;
+	DataBaseManager m_music_list;
+
+	// Для быстрого доступа к полям структуры
+#define CMD_NAME(num) m_command[num].GetAttribute(0)
+#define CMD_SH_DECR(num) m_command[num].GetAttribute(1)
+#define CMD_FL_DESCR(num) m_command[num].GetAttribute(2)
+#define CMD_CHK_FUNC(in_name, in_arg) (this->*m_command[GetNumberOfCommand(in_name)].GetCheckFunction())(in_arg)
 
 	// конструктор и деструктор
 	Menu();
 	~Menu();
+
+	// функция меню
+	void ProgramMenu();
 
 	// Проверяет, является ли введенная строка командой СУБД
 	bool IsCommandCorrect(const string& _command);
@@ -41,21 +44,31 @@ struct Menu
 	// Получение номера команды в массиве
 	int GetNumberOfCommand(const string& _command);
 
-	// отображение логотипа
-	void ShowLogo();
-
+	//****************************//
+	//		ФУНКЦИИ ПРОВЕРОК	  //
+	//****************************//
+	
 	// проверка команды ВЫХОД
-	void CheckExit(string _str);
+	void CheckCMDExit(string _str);
 
 	// проверка команды ПОМОЩЬ
-	void CheckHelp(string _str);
+	void CheckCMDHelp(string _str);
 
 	// проверка команды	ЧТЕНИЕДАННЫХ
-	void CheckReadData(string _str);
+	void CheckCMDReadDB(string _str);
 
-	// проверка команды	ПЕЧАТЬДАННЫХ
-	void CheckPrintData(string _str);
+	// сохранить базу данных в файл
+	void CheckCMDSaveDBToFile(string _str);
 
-	// функция меню
-	void ProgramMenu();
+	// удалить элемент из базы данных
+	void CheckCMDDeleteDBNode(string _str);
+
+	// печать базы данных в консоль в читаемом виде
+	void CheckCMDPrintDBToConsole(string _str);
+
+	// очистка базы данных
+	void CheckCMDClearDB(string _str);
+
+	// сортировка базы данных
+	void CheckCMDSelectFromDB(string _str);
 };

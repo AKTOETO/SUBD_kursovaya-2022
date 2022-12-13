@@ -143,6 +143,9 @@
     <ClInclude Include="menu\menu.h" />
     <ClInclude Include="support_func\support_func.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="assets\db.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

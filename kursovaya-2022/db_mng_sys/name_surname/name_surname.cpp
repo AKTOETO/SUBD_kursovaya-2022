@@ -9,7 +9,7 @@ ostream& operator<<(ostream& _out_stream, const NameSurname& _name)
 }
 
 NameSurname::NameSurname()
-	:m_name(not_correct_data), m_surname(not_correct_data)
+	:m_name(NOT_CORRECT_DATA), m_surname(NOT_CORRECT_DATA)
 {
 }
 
