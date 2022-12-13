@@ -16,10 +16,6 @@ Menu::Menu()
 	m_command[1].SetCheckFunction(&Menu::CheckCMDHelp);
 	m_command[2].SetCheckFunction(&Menu::CheckCMDReadDB);
 	m_command[3].SetCheckFunction(&Menu::CheckCMDPrintDBToConsole);
-	/*m_command[0].m_check_func = &Menu::CheckCMDExit;
-	m_command[1].m_check_func = &Menu::CheckCMDHelp;
-	m_command[2].m_check_func = &Menu::CheckCMDReadDB;
-	m_command[3].m_check_func = &Menu::CheckCMDPrintDBToConsole;*/
 }
 
 Menu::~Menu()
@@ -207,6 +203,14 @@ void Menu::CheckCMDReadDB(string _str)
 	}
 }
 
+void Menu::CheckCMDSaveDBToFile(string _str)
+{
+}
+
+void Menu::CheckCMDDeleteDBNode(string _str)
+{
+}
+
 // проверка команды	ПЕЧАТЬДАННЫХ
 void Menu::CheckCMDPrintDBToConsole(string _str)
 {
@@ -253,4 +257,12 @@ void Menu::CheckCMDPrintDBToConsole(string _str)
 	//	INFO("CHECKPRINTDATA: неизвестный ключ: \"" + temp + "\"");
 	//}
 
+}
+
+void Menu::CheckCMDClearDB(string _str)
+{
+}
+
+void Menu::CheckCMDSelectFromDB(string _str)
+{
 }

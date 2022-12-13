@@ -26,6 +26,7 @@ Command::Command()
 
 Command::~Command()
 {
+	// TODO добавить деструктор m_cmd_attributes
 }
 
 void Command::SetCheckFunction(CheckFunc _check_func)
