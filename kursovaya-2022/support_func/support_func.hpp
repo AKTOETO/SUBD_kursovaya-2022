@@ -156,30 +156,3 @@ inline string ToUpperCase(const string _str)
 	}
 	return out;
 }
-
-
-/// <summary>
-/// Нужна была для создания множества кадров из логотипа
-/// </summary>
-inline void CutLogoToFrames(int numb_of_column = 82, int numb_of_str = 9)
-{
-	// файл с логотипом
-	ifstream fin(PATH_TO_LOGO);
-
-	// нарезка логотипа на кадры
-	// и запись их в отдельные файлы
-	for (int i = 0; i < numb_of_column; i++)
-	{
-		ofstream fout(PATH_TO_LOGO_FOLDER + to_string(i) + "_slide.txt");
-
-		for (int j = 0; j < numb_of_str; j++)
-		{
-			string temp;
-			getline(fin, temp);
-			fout << temp.substr(0, i) << endl;
-		}
-		fin.seekg(0);
-
-		fout.close();
-	}
-}
