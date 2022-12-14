@@ -2,5 +2,5 @@
 indent_style = tab
 indent_size = 4
 
-[*.{cpp,md,txt}]
+[*.{cpp,md}]
 charset = utf-8-bom
