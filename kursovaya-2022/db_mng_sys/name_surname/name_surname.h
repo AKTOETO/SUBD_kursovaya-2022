@@ -1,5 +1,5 @@
 #pragma once
-#include "../../constants.h"
+#include "../../support_func/support_func.hpp"
 
 // Структура ИМЯ ФАМИЛИЯ
 class NameSurname
@@ -12,12 +12,21 @@ public:
 	// конструктор по умолчанию
 	NameSurname();
 
+	// конструктор копирования
+	NameSurname(const NameSurname&);
+
 	// конструктор с параметрами
 	NameSurname(string _surname, string _name);
 
 	// деструктор
 	~NameSurname();
 
+	// оператор присваивания
+	NameSurname& operator= (const NameSurname&);
+
 	// оператор вывода
 	friend ostream& operator<<(ostream& _out_stream, const NameSurname& _name);
+
+	// Оператор ввода
+	friend istream& operator>> (istream& _in_stream, NameSurname& _obj);
 };

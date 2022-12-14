@@ -10,12 +10,18 @@ void DataBaseManager::SaveDBToFile(string _file_path)
 
 void DataBaseManager::ResetDBFromDefaultDB()
 {
+	m_db_for_modifications = m_default_db;
 }
 
 void DataBaseManager::ReadDBNodeFromString(string _str)
 {
 	// добавление элемента в список
-	m_default_db.push(_str);
+	m_db_for_modifications.push(_str);
+}
+
+void DataBaseManager::ReadDBNodeFromNode(MusicStuff _obj)
+{
+	m_db_for_modifications.push(_obj);
 }
 
 void DataBaseManager::DeleteDBNode(string _str)
@@ -41,19 +47,22 @@ void DataBaseManager::ReadDBFromFile(ifstream& _read_stream)
 			getline(_read_stream, data_str);
 
 			// записываем эту информацию в список
-			//m_default_db.push(data_str);
-			ReadDBNodeFromString(data_str);
+			m_default_db.push(data_str);
 		}
 	}
+
+	// копирование основного списка в список
+	// который можно будет модифицировать
+	m_db_for_modifications = m_default_db;
 }
 
-void DataBaseManager::PrintDBToConsole(ostream& _out_stream)
+void DataBaseManager::PrintDBToConsole() const
 {
 	// печатаем список, если он не пуст
-	if (m_default_db.get_size() != 0)
+	if (m_db_for_modifications.get_size() != 0)
 	{
-		_out_stream << table_cap;
-		_out_stream << m_default_db;
+		cout << table_cap;
+		cout << m_db_for_modifications;
 	}
 	else
 	{

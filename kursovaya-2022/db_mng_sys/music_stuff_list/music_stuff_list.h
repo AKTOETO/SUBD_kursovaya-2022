@@ -27,11 +27,14 @@ public:
 	// считать элемент из строки
 	void ReadDBNodeFromString(string _node);
 
+	// считать элемень из уже существующего
+	void ReadDBNodeFromNode(MusicStuff);
+
 	// удалить элемент из базы данных
 	void DeleteDBNode(string _str);
 
 	// печать в поток
-	void PrintDBToConsole(ostream& _out_stream);
+	void PrintDBToConsole() const;
 
 	// очистить базу данных
 	void ClearDB();

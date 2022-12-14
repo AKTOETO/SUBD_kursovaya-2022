@@ -18,6 +18,9 @@ public:
 	// конструктор без параметров
 	MusicStuff();
 
+	// конструктор копирования
+	MusicStuff(const MusicStuff&);
+
 	// конструктор считывающий данные из строки
 	MusicStuff(string& _input_string);
 
@@ -26,4 +29,22 @@ public:
 
 	// оператор вывода в консоль
 	friend ostream& operator<<(ostream& _out_stream, const MusicStuff& _music_stuff);
+
+	// Set методы
+	void SetStorage(string);
+	void SetSerialNumber(int);
+	void SetName(string);
+	void SetArtistsName(NameSurname);
+	void SetSoundTime(int);
+	void SetNumberOfPlays(int);
+	void SetPrice(int);
+	// Get методы
+	string GetStorage() const;
+	int GetSerialNumber() const;
+	string GetName() const;
+	NameSurname GetArtistsName() const;
+	int GetSoundTime() const;
+	int GetNumberOfPlays() const;
+	int GetPrice() const;
+
 };

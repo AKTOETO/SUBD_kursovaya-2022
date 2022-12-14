@@ -9,7 +9,7 @@
 #include <fstream>
 #include <Windows.h>
 
-struct Menu
+class Menu
 {
 	/* массив с командами
 	*	возможные коды управления СУБД
@@ -30,7 +30,7 @@ struct Menu
 #define CMD_SH_DECR(num) m_command[num].GetAttribute(1)
 #define CMD_FL_DESCR(num) m_command[num].GetAttribute(2)
 #define CMD_CHK_FUNC(in_name, in_arg) (this->*m_command[GetNumberOfCommand(in_name)].GetCheckFunction())(in_arg)
-
+public:
 	// конструктор и деструктор
 	Menu();
 	~Menu();

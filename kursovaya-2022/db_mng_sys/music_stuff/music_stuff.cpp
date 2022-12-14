@@ -11,6 +11,17 @@ MusicStuff::MusicStuff()
 {
 }
 
+MusicStuff::MusicStuff(const MusicStuff& _obj)
+{
+	m_storage = _obj.m_storage;
+	m_serial_number = _obj.m_serial_number;
+	m_name = _obj.m_name;
+	m_artist_name = _obj.m_artist_name;
+	m_sound_time = _obj.m_sound_time;
+	m_number_of_plays = _obj.m_number_of_plays;
+	m_price = _obj.m_price;
+}
+
 MusicStuff::MusicStuff(string& _input_string)
 {
 	// Cтруктура данных при считывании из потока ввода должна выглядеть так
@@ -52,4 +63,74 @@ ostream& operator<<(ostream& _out_stream, const MusicStuff& _music_stuff)
 		<< "|";
 
 	return _out_stream;
+}
+
+void MusicStuff::SetStorage(string _str)
+{
+	m_storage = _str;
+}
+
+void MusicStuff::SetSerialNumber(int _num)
+{
+	m_serial_number = _num;
+}
+
+void MusicStuff::SetName(string _str)
+{
+	m_name = _str;
+}
+
+void MusicStuff::SetArtistsName(NameSurname _obj)
+{
+	m_artist_name = _obj;
+}
+
+void MusicStuff::SetSoundTime(int _num)
+{
+	m_sound_time = _num;
+}
+
+void MusicStuff::SetNumberOfPlays(int _num)
+{
+	m_number_of_plays = _num;
+}
+
+void MusicStuff::SetPrice(int _num)
+{
+	m_price = _num;
+}
+
+string MusicStuff::GetStorage() const
+{
+	return m_storage;
+}
+
+int MusicStuff::GetSerialNumber() const
+{
+	return m_serial_number;
+}
+
+string MusicStuff::GetName() const
+{
+	return m_name;
+}
+
+NameSurname MusicStuff::GetArtistsName() const
+{
+	return m_artist_name;
+}
+
+int MusicStuff::GetSoundTime() const
+{
+	return m_sound_time;
+}
+
+int MusicStuff::GetNumberOfPlays() const
+{
+	return m_number_of_plays;
+}
+
+int MusicStuff::GetPrice() const
+{
+	return m_price;
 }

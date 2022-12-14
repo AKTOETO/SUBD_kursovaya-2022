@@ -6,9 +6,12 @@
 
 using namespace std;
 
+// Булевая функция по умолчанию
+#define DEF_BOOL(type) [](type str) {return true; }
+
 // ввод и проверка значений
 template<class T, class FUNC>
-inline T input_and_check(
+inline T CheckableRead(
 	const FUNC& _comp,				// функция сравнения 
 	const string _welcome_str,		// строка с запросом ввода
 	const string _err_str			// строка с ошибкой
@@ -21,22 +24,29 @@ inline T input_and_check(
 	// вывод сообщения
 	cout << _welcome_str << "\n";
 
+	// считывание из консоли
 	cin >> symb;
 
-	// если было введено некорректное значение
-	if (!_comp(symb)) {
-		// если была введено не то, что нужно было
-		if (cin.fail())
-		{
-			cin.clear();
-			cin.ignore(INT_MAX, '\n');
-		}
+	// если была введено не то, что нужно было
+	if (cin.fail() || !_comp(symb))
+	{
+		// очистка потока
+		cin.clear();
+		cin.ignore(INT_MAX, '\n');
 		cout << _err_str << "\n";
-
-		// рекурсивное обращение
-		symb = input_and_check<T>(_comp, _welcome_str, _err_str);
+		// рекурсивный запрос значения
+		symb = CheckableRead<T>(_comp, _welcome_str, _err_str);
 	}
 	return symb;
+}
+
+// очистка потока ввода
+inline void ClearEnterSymbCin()
+{
+	if (cin.peek() == '\n')
+	{
+		cin.get();
+	}
 }
 
 // является ли символ кириллическим
