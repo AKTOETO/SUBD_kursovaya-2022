@@ -17,6 +17,7 @@ Menu::Menu()
 	m_command[2].SetCheckFunction(&Menu::CheckCMDReadDB);
 	m_command[3].SetCheckFunction(&Menu::CheckCMDPrintDBToConsole);
 	m_command[4].SetCheckFunction(&Menu::CheckCMDSaveDBToFile);
+	m_command[5].SetCheckFunction(&Menu::CheckCMDDeleteDBNode);
 }
 
 Menu::~Menu()
@@ -126,7 +127,7 @@ void Menu::CheckCMDHelp(string _str)
 {
 	// если аргументы не были переданы
 	// тогда выводим все команды и информацию по ним
-	if (_str.size() == 0)
+	if (!_str.length())
 	{
 		for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
 		{
@@ -288,7 +289,7 @@ void Menu::CheckCMDSaveDBToFile(string _str)
 	ofstream fout;
 
 	// если ключей нет
-	if (temp.length() == 0)
+	if (!temp.length())
 	{
 		// использую стандартный файл вывода
 		INFO("Использование стандартного файла вывода " + DB_FILE_PATH);
@@ -324,57 +325,86 @@ void Menu::CheckCMDSaveDBToFile(string _str)
 	fout.close();
 }
 
+// удаление элеемнта из базы данных
 void Menu::CheckCMDDeleteDBNode(string _str)
 {
+	// как удалять: с помощью индекса
+	// или с помощью поля
+	string temp = GetToken(_str);
+
+	// если было введено удаление по индексу
+	if (temp == "-и")
+	{
+		// получение индекса
+		temp = GetToken(_str);
+
+		// если есть индекс и temp число
+		if (temp.length() && IsThereANotNegativeNumber(temp))
+		{
+			// запись индекса в виде числа
+			int index = atoi(temp.c_str()) - 1;
+			
+			// поиск элемента для удаления
+			node<MusicStuff>* nd = m_db_manager.FindNodeToDelete(index);
+
+			if (!nd)
+			{
+				FUNC_INFO("элемент не найден");
+				return;
+			}
+
+			// если не должны задавать вопросов
+			temp = GetToken(_str);
+
+			if (temp == "-с")
+			{
+				m_db_manager.DeleteDBNode(nd);
+			}
+			else
+			{
+				// уточнение у пользователя
+				// готов ли он удалить эти элементы			
+				INFO("\tЭлемент для удаления:");
+				cout << nd->get_data() << endl;
+
+				// получение ответа
+				string answ = CheckableRead(
+					"\t[Готовы ли вы удалить его? (да/нет)]> ",
+					[](string str)
+					{
+						return ToLowerCase(str) == "да" || ToLowerCase(str) == "нет";
+					}
+				);
+
+				// если ответ да
+				if (answ == "да")
+				{
+					m_db_manager.DeleteDBNode(nd);
+				}
+			}
+		}
+		// если нет индекса
+		else
+		{
+			FUNC_INFO("не введено значение после -и или оно некорректно");
+		}
+	}
+	// если было введено удаление по полю
+	else if (temp == "-к")
+	{
+
+	}
+	else
+	{
+		INFO("CHECKCMDDELETEDBNODE: неизвестный ключ: \"" + temp + "\"");
+	}
+
 }
 
 // проверка команды	ПЕЧАТЬДАННЫХ
 void Menu::CheckCMDPrintDBToConsole(string _str)
 {
 	m_db_manager.PrintDBToConsole();
-	// ДОЛЖНО БЫТЬ НЕ ТАК
-	// НАДО ПРОСТО ВЫВОДИТЬ В КОНСОЛЬ, НИЧЕГО
-	// НЕ ВЫБИРАЯ ИФАМИ
-	//// место вывода информации
-	//string temp = GetToken(_str);
-
-	//// создаем файловый поток и
-	//// выводим информацию туда
-	//ofstream fout;
-
-	//// проверка места вывода информации
-	//// в файла
-	//if (temp == "-ф")
-	//{
-	//	INFO("Печать в файл");
-
-	//	// проверка на наличие файлового пути
-	//	temp = GetToken(_str);
-
-	//	// если путь до файла не указан
-	//	// используем стандартный путь
-	//	if (temp.length() == 0)
-	//	{
-	//		INFO("Использование стандартного файла " + DB_FILE_PATH);
-	//		temp = DB_FILE_PATH;
-	//	}
-
-	//	m_db_manager.PrintDBToConsole(fout);		
-
-	//	// закрытие файла
-	//	fout.close();
-	//}
-	//// в консоли
-	//else if (temp == "-к" || !temp.length())
-	//{
-	//	//TODO
-	//	m_db_manager.PrintDBToConsole(cout);
-	//}
-	//else
-	//{
-	//	INFO("CHECKPRINTDATA: неизвестный ключ: \"" + temp + "\"");
-	//}
-
 }
 
 void Menu::CheckCMDClearDB(string _str)

@@ -16,8 +16,14 @@ public:
 	// получить последний элемент
 	node<MusicStuff>* GetLastNode() const;
 
+	// получит первый элемент
+	node<MusicStuff>* GetFirstNode() const;
+
 	// получение индекса последнего элемента из списка
 	int GetLastIndexOfNode() const;
+
+	// получение размера списка
+	int GetSizeOfDataBase() const;
 
 	// сохранение базы данных в файл
 	void SaveDBToFile(ostream& _out_stream);
@@ -31,8 +37,13 @@ public:
 	// считать элемень из уже существующего
 	void ReadDBNodeFromNode(MusicStuff);
 
+	// поиск элемента для удаления
+	node<MusicStuff>* FindNodeToDelete(int _index);
+
 	// удалить элемент из базы данных
 	void DeleteDBNode(string _str);
+	void DeleteDBNode(int _index);
+	void DeleteDBNode(node<MusicStuff>* _node);
 
 	// печать в поток
 	void PrintDBToConsole() const;
@@ -45,4 +56,7 @@ public:
 
 	// выборка элементов
 	void SelectDB(string _str);
+
+	// перерасчет индексов
+	void IndexesRecalculation();
 };

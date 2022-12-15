@@ -12,6 +12,9 @@ using namespace std;
 // вывод в консоль сообщения
 #define INFO(str) cout<<"\t"<<str<<"\n";
 
+// вывод сообщения от имени функции
+#define FUNC_INFO(str) cout<<"\t" + string(__FUNCTION__) +": " str + "\n";
+
 // Показывать логотип в начале
 // Если не нужно показывать, закоментировать строку
 //#define SHOW_LOGO
@@ -32,7 +35,7 @@ DBMS_CONSOLE_REQUEST_COMMAND +
 Если неизвестны команды, введите \"помощь\"\n\n";
 
 // количество команд
-const int NUMBERS_OF_COMMANDS = 5;
+const int NUMBERS_OF_COMMANDS = 6;
 
 // массив с файлами, в которых лежит описание команд
 const string COMMAND_DESCRIPTION_FILES[NUMBERS_OF_COMMANDS] =
@@ -41,7 +44,8 @@ const string COMMAND_DESCRIPTION_FILES[NUMBERS_OF_COMMANDS] =
 	"help.txt",
 	"read.txt",
 	"print.txt",
-	"save.txt"
+	"save.txt",
+	"delete.txt",
 };
 
 // сообщение об ошибочном вводе команды
