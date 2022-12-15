@@ -4,6 +4,26 @@ DataBaseManager::DataBaseManager()
 {
 }
 
+DataBaseManager::~DataBaseManager()
+{
+}
+
+node<MusicStuff>* DataBaseManager::GetLastNode() const
+{
+	return m_default_db.get_end();
+}
+
+int DataBaseManager::GetLastIndexOfNode() const
+{
+	node<MusicStuff>* el = GetLastNode();
+	int number = 1;
+	if (el != NULL)
+	{
+		number = el->get_data().GetSerialNumber();
+	}
+	return number;
+}
+
 void DataBaseManager::SaveDBToFile(ostream& _out_stream)
 {
 	node<MusicStuff>* el = m_default_db.get_begin();

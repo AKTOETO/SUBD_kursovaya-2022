@@ -204,50 +204,69 @@ void Menu::CheckCMDReadDB(string _str)
 	{
 		INFO("Ввод с консоли:");
 		MusicStuff ms;
+
+		// считывание места хранения
 		ms.SetStorage(
-			CheckableRead<string>(
-				DEF_BOOL(string),
+			CheckableRead(
 				"\t[Введите НОСИТЕЛЬ]> "
-				)
-		);
-		ms.SetSerialNumber(
-			CheckableRead<int>(
-				DEF_BOOL(int),
-				"\t[Введите ПОРЯДКОВЫЙ НОМЕР]> "
-				)
-		);
-		ms.SetName(
-			CheckableRead<string>(
-				DEF_BOOL(string),
-				"\t[Введите НАЗВАНИЕ ТРЕКА]> "
-				)
-		);
-		ms.SetArtistsName(
-			CheckableRead<NameSurname>(
-				DEF_BOOL(NameSurname),
-				"")
-		);
-		ms.SetSoundTime(
-			CheckableRead<int>(
-				DEF_BOOL(int),
-				"\t[Введите ВРЕМЯ ЗВУЧАНИЯ]> "
-				)
-		);
-		ms.SetNumberOfPlays(
-			CheckableRead<int>(
-				DEF_BOOL(int),
-				"\t[Введите КОЛИЧЕСТВО ВОСПРОИЗВЕДЕНИЙ]> "
-				)
-		);
-		ms.SetPrice(
-			CheckableRead<int>(
-				DEF_BOOL(int),
-				"\t[Введите ЦЕНУ]> "
-				)
+			)
 		);
 
-		// очистка потока ввода от мусора
-		cin.ignore(INT_MAX, '\n');
+		// запись порядкового номера
+		ms.SetSerialNumber(
+			m_db_manager.GetLastIndexOfNode() + 1
+		);
+
+		// считывание названия трека
+		ms.SetName(
+			CheckableRead(
+				"\t[Введите НАЗВАНИЕ ТРЕКА]> "
+			)
+		);
+
+		// считывание имени исполнителя
+		ms.SetArtistsName(
+			CheckableRead(
+				"\t[Введите ИМЯ исполнителя]> "
+			)
+		);
+
+		// считывание фамилии исполнителя
+		ms.SetArtistsSurname(
+			CheckableRead(
+				"\t[Введите ФАМИЛИЮ исполнителя]> "
+			)
+		);
+
+		// считывание времени проигрывания трека
+		ms.SetSoundTime(
+			atoi(
+				CheckableRead(
+					"\t[Введите ВРЕМЯ ЗВУЧАНИЯ (минуты)]> ",
+					IsThereANotNegativeNumber
+				).c_str()
+			)
+		);
+
+		// считывание количества воспроизведений
+		ms.SetNumberOfPlays(
+			atoi(
+				CheckableRead(
+					"\t[Введите КОЛИЧЕСТВО ВОСПРОИЗВЕДЕНИЙ]> ",
+					IsThereANotNegativeNumber
+				).c_str()
+			)
+		);
+
+		// считывание цены
+		ms.SetPrice(
+			atoi(
+				CheckableRead(
+					"\t[Введите ЦЕНУ (рубли)]> ",
+					IsThereANotNegativeNumber
+				).c_str()
+			)
+		);
 
 		// запись считанного элемента в список
 		m_db_manager.ReadDBNodeFromNode(ms);

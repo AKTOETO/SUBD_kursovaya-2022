@@ -36,6 +36,16 @@ NameSurname& NameSurname::operator=(const NameSurname& _obj)
 	return *this;
 }
 
+void NameSurname::SetName(string _str)
+{
+	m_name = _str;
+}
+
+void NameSurname::SetSurname(string _str)
+{
+	m_surname = _str;
+}
+
 string NameSurname::GetName() const
 {
 	return m_name;
@@ -56,12 +66,10 @@ ostream& operator<<(ostream& _out_stream, const NameSurname& _name)
 
 istream& operator>>(istream& _in_stream, NameSurname& _obj)
 {
-	_obj.m_name = CheckableRead<string>(
-		DEF_BOOL(string),
+	_obj.m_name = CheckableRead(
 		"\t[Введите ИМЯ исполнителя]> "
 		);
-	_obj.m_surname = CheckableRead<string>(
-		DEF_BOOL(string),
+	_obj.m_surname = CheckableRead(
 		"\t[Введите ФАМИЛИЮ исполнителя]> "
 		);
 

@@ -80,9 +80,14 @@ void MusicStuff::SetName(string _str)
 	m_name = _str;
 }
 
-void MusicStuff::SetArtistsName(NameSurname _obj)
+void MusicStuff::SetArtistsName(string _str)
 {
-	m_artist_name = _obj;
+	m_artist_name.SetName(_str);
+}
+
+void MusicStuff::SetArtistsSurname(string _str)
+{
+	m_artist_name.SetSurname(_str);
 }
 
 void MusicStuff::SetSoundTime(int _num)

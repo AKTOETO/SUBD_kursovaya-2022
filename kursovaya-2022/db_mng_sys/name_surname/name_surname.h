@@ -30,6 +30,10 @@ public:
 	// Оператор ввода
 	friend istream& operator>> (istream& _in_stream, NameSurname& _obj);
 
+	// Set методы
+	void SetName(string);
+	void SetSurname(string);
+
 	// Get методы
 	string GetName()const;
 	string GetSurname()const;

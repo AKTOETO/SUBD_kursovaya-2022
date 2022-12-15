@@ -2,41 +2,69 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 #include "../constants.h"
 
 using namespace std;
 
 // Булевая функция по умолчанию
-#define DEF_BOOL(type) [](type str) {return true; }
+inline bool DefaultTrueFunc(string)
+{
+	return true;
+}
+
+// Проверка на число
+inline bool IsThereANumber(string _str)
+{
+	// итератор на начало строки
+	std::string::const_iterator it = _str.begin();
+
+	// идем до символа, который окажется не цифрой
+	while (it != _str.end() && std::isdigit(*it)) it++;
+
+	// если строка не пустая и мы дошли до конца
+	// значит это число
+	return !_str.empty() && (_str.begin() - it != 0);
+}
+
+// проверка на не отрицательное число
+inline bool IsThereANotNegativeNumber(string _str)
+{
+	// если это число и оно не отрицательно
+	if (IsThereANumber(_str) && atoi(_str.c_str()) >= 0)
+		return true;
+	return false;
+}
 
 // ввод и проверка значений
-template<class T, class FUNC>
-inline T CheckableRead(
-	const FUNC& _comp,				// функция сравнения 
+template<class FUNC = bool(string)>
+inline string CheckableRead(
 	const string _welcome_str,		// строка с запросом ввода
+	const FUNC& _comp				// функция сравнения 
+	= DefaultTrueFunc,
 	const string _err_str			// строка с ошибкой
 	= "Было введено некорректное значение"
 )
 {
 	// считываемый символ
-	T symb;
+	//T symb;
+	string str;
 
 	// вывод сообщения
 	cout << _welcome_str;
 	// считывание из консоли
-	cin >> symb;
+	//cin >> symb;
+	getline(cin, str);
 
-	// если была введено не то, что нужно было
-	if (cin.fail() || !_comp(symb))
+	// если было введено не то, что нужно было
+	if (!_comp(str))
 	{
 		// очистка потока
-		cin.clear();
-		cin.ignore(INT_MAX, '\n');
 		cout << _err_str << "\n";
 		// рекурсивный запрос значения
-		symb = CheckableRead<T>(_comp, _welcome_str, _err_str);
+		str = CheckableRead<FUNC>(_welcome_str, _comp, _err_str);
 	}
-	return symb;
+	return str;
 }
 
 // является ли символ кириллическим

@@ -10,6 +10,14 @@ class DataBaseManager
 public:
 	// Конструктор по умолчанию
 	DataBaseManager();
+	// Деструктор по умолчанию
+	~DataBaseManager();
+
+	// получить последний элемент
+	node<MusicStuff>* GetLastNode() const;
+
+	// получение индекса последнего элемента из списка
+	int GetLastIndexOfNode() const;
 
 	// сохранение базы данных в файл
 	void SaveDBToFile(ostream& _out_stream);

@@ -34,10 +34,12 @@ public:
 	void SetStorage(string);
 	void SetSerialNumber(int);
 	void SetName(string);
-	void SetArtistsName(NameSurname);
+	void SetArtistsName(string);
+	void SetArtistsSurname(string);
 	void SetSoundTime(int);
 	void SetNumberOfPlays(int);
 	void SetPrice(int);
+
 	// Get методы
 	string GetStorage() const;
 	int GetSerialNumber() const;
