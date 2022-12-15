@@ -7,22 +7,15 @@ class DataBaseManager
 	// база данных со всеми данными
 	my_list<MusicStuff> m_default_db;
 
-	// база данных дл€ изменени€
-	my_list<MusicStuff> m_db_for_modifications;
-
 public:
 	//  онструктор по умолчанию
 	DataBaseManager();
 
 	// сохранение базы данных в файл
-	void SaveDBToFile(string _file_path);
+	void SaveDBToFile(ostream& _out_stream);
 
 	// считать базу данных из файла
 	void ReadDBFromFile(ifstream& _read_stream);
-
-	// сброс модификацированной базы данных
-	// до изначального состо€ни€
-	void ResetDBFromDefaultDB();
 
 	// считать элемент из строки
 	void ReadDBNodeFromString(string _node);

@@ -16,6 +16,7 @@ Menu::Menu()
 	m_command[1].SetCheckFunction(&Menu::CheckCMDHelp);
 	m_command[2].SetCheckFunction(&Menu::CheckCMDReadDB);
 	m_command[3].SetCheckFunction(&Menu::CheckCMDPrintDBToConsole);
+	m_command[4].SetCheckFunction(&Menu::CheckCMDSaveDBToFile);
 }
 
 Menu::~Menu()
@@ -173,6 +174,11 @@ void Menu::CheckCMDReadDB(string _str)
 			INFO("Использование стандартного файла " + DB_FILE_PATH);
 			temp = DB_FILE_PATH;
 		}
+		else
+		{
+			temp = DB_FOLDER_PATH + temp;
+			INFO("Использование файла " + temp);
+		}
 
 		// создаем файловый поток и
 		// читаем информацию оттуда
@@ -207,12 +213,14 @@ void Menu::CheckCMDReadDB(string _str)
 		ms.SetSerialNumber(
 			CheckableRead<int>(
 				DEF_BOOL(int),
-				"\t[Введите ПОРЯДКОВЫЙ НОМЕР]> ")
+				"\t[Введите ПОРЯДКОВЫЙ НОМЕР]> "
+				)
 		);
 		ms.SetName(
 			CheckableRead<string>(
 				DEF_BOOL(string),
-				"\t[Введите НАЗВАНИЕ ТРЕКА]> ")
+				"\t[Введите НАЗВАНИЕ ТРЕКА]> "
+				)
 		);
 		ms.SetArtistsName(
 			CheckableRead<NameSurname>(
@@ -222,17 +230,20 @@ void Menu::CheckCMDReadDB(string _str)
 		ms.SetSoundTime(
 			CheckableRead<int>(
 				DEF_BOOL(int),
-				"\t[Введите ВРЕМЯ ЗВУЧАНИЯ]> ")
+				"\t[Введите ВРЕМЯ ЗВУЧАНИЯ]> "
+				)
 		);
 		ms.SetNumberOfPlays(
 			CheckableRead<int>(
 				DEF_BOOL(int),
-				"\t[Введите КОЛИЧЕСТВО ВОСПРОИЗВЕДЕНИЙ]> ")
+				"\t[Введите КОЛИЧЕСТВО ВОСПРОИЗВЕДЕНИЙ]> "
+				)
 		);
 		ms.SetPrice(
 			CheckableRead<int>(
 				DEF_BOOL(int),
-				"\t[Введите ЦЕНУ]> ")
+				"\t[Введите ЦЕНУ]> "
+				)
 		);
 
 		// очистка потока ввода от мусора
@@ -247,8 +258,51 @@ void Menu::CheckCMDReadDB(string _str)
 	}
 }
 
+// сохранение базы данных в файл
 void Menu::CheckCMDSaveDBToFile(string _str)
 {
+	// место считывания информации
+	string temp = GetToken(_str);
+
+	// создаем файловый поток и
+	// выводим информацию туда
+	ofstream fout;
+
+	// если ключей нет
+	if (temp.length() == 0)
+	{
+		// использую стандартный файл вывода
+		INFO("Использование стандартного файла вывода " + DB_FILE_PATH);
+		temp = DB_FILE_PATH;
+
+		// открытие файла
+		fout.open(temp);
+
+		// сохранение базы данных в файл
+		m_db_manager.SaveDBToFile(fout);
+	}
+	// иначе пытаюсь вывести в temp файл
+	else if (temp == "-ф")
+	{
+		INFO("Печать в файл");
+
+		// получение файлового пути
+		temp = DB_FOLDER_PATH + GetToken(_str);
+
+		INFO("Использование файла " + temp);
+
+		// открытие файла
+		fout.open(temp);
+
+		// сохранение базы данных в файл
+		m_db_manager.SaveDBToFile(fout);
+	}
+	else
+	{
+		INFO("CHECKCMDSAVEDBTOFILE: неизвестный ключ: \"" + temp + "\"");
+	}
+	// закрытие файлового потока
+	fout.close();
 }
 
 void Menu::CheckCMDDeleteDBNode(string _str)
@@ -282,8 +336,8 @@ void Menu::CheckCMDPrintDBToConsole(string _str)
 	//	// используем стандартный путь
 	//	if (temp.length() == 0)
 	//	{
-	//		INFO("Использование стандартного файла " + DB_OUTPUT_PATH);
-	//		temp = DB_OUTPUT_PATH;
+	//		INFO("Использование стандартного файла " + DB_FILE_PATH);
+	//		temp = DB_FILE_PATH;
 	//	}
 
 	//	m_db_manager.PrintDBToConsole(fout);		

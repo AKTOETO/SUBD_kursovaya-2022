@@ -47,4 +47,6 @@ public:
 	int GetNumberOfPlays() const;
 	int GetPrice() const;
 
+	string GetFormattedFormToSaveToFile() const;
+
 };

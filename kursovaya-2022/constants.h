@@ -32,7 +32,7 @@ DBMS_CONSOLE_REQUEST_COMMAND +
 Если неизвестны команды, введите \"помощь\"\n\n";
 
 // количество команд
-const int NUMBERS_OF_COMMANDS = 4;
+const int NUMBERS_OF_COMMANDS = 5;
 
 // массив с файлами, в которых лежит описание команд
 const string COMMAND_DESCRIPTION_FILES[NUMBERS_OF_COMMANDS] =
@@ -40,7 +40,8 @@ const string COMMAND_DESCRIPTION_FILES[NUMBERS_OF_COMMANDS] =
 	"exit.txt",
 	"help.txt",
 	"read.txt",
-	"print.txt"
+	"print.txt",
+	"save.txt"
 };
 
 // сообщение об ошибочном вводе команды
@@ -50,13 +51,13 @@ const string NOT_CORRECT_COMMAND = " такой команды не существует\n\
 введите: помощь <неизвестная команда>\n";
 
 // сообщение о некорректных данных
-const string NOT_CORRECT_DATA = "----";
+const string NOT_CORRECT_DATA = "-";
+
+// путь до ппаки с базами данных
+const string DB_FOLDER_PATH = "assets/databases/";
 
 // путь до файла с базой данных
-const string DB_FILE_PATH = "assets/db.txt";
-
-// файл с выводом программы
-const string DB_OUTPUT_PATH = "assets/subd_log.txt";
+const string DB_FILE_PATH = DB_FOLDER_PATH + "db.txt";
 
 // заполнение len элементов элементом symb
 #define OUT_W(symb, len) fixed << setfill(symb) << setw(len)

@@ -58,6 +58,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="assets\db.txt" />
+    <Text Include="assets\databases\db.txt" />
   </ItemGroup>
 </Project>

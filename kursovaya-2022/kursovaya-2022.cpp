@@ -15,9 +15,6 @@ int main()
 
 	Menu mn;
 	mn.ProgramMenu();
-	//cin.putback(' ');
-	//cout << "(" << cin.peek() << ")";
-
 
 	return 0;
 }

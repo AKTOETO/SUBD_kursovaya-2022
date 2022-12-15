@@ -134,3 +134,17 @@ int MusicStuff::GetPrice() const
 {
 	return m_price;
 }
+
+string MusicStuff::GetFormattedFormToSaveToFile() const
+{
+	return string(
+		to_string(m_serial_number) + ':' +
+		m_storage + ':' +
+		m_name + ':' +
+		m_artist_name.GetName() + ':' +
+		m_artist_name.GetSurname() + ':' +
+		to_string(m_sound_time) + ':' +
+		to_string(m_number_of_plays) + ':' +
+		to_string(m_price)
+	);
+}

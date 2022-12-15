@@ -1,27 +1,5 @@
 ﻿#include "name_surname.h"
 
-ostream& operator<<(ostream& _out_stream, const NameSurname& _name)
-{
-	_out_stream <<
-		OUT_W(' ', width_of_fields[3]) << _name.m_name <<
-		OUT_W(' ', width_of_fields[4]) << _name.m_surname;
-	return _out_stream;
-}
-
-istream& operator>>(istream& _in_stream, NameSurname& _obj)
-{
-	_obj.m_name = CheckableRead<string>(
-		DEF_BOOL(string),
-		"\t[Введите ИМЯ исполнителя]> "
-		);
-	_obj.m_surname = CheckableRead<string>(
-		DEF_BOOL(string),
-		"\t[Введите ФАМИЛИЮ исполнителя]> "
-		);
-
-	return _in_stream;
-}
-
 NameSurname::NameSurname()
 	:m_name(NOT_CORRECT_DATA), m_surname(NOT_CORRECT_DATA)
 {
@@ -56,4 +34,36 @@ NameSurname& NameSurname::operator=(const NameSurname& _obj)
 
 	// возвращение объекта
 	return *this;
+}
+
+string NameSurname::GetName() const
+{
+	return m_name;
+}
+
+string NameSurname::GetSurname() const
+{
+	return m_surname;
+}
+
+ostream& operator<<(ostream& _out_stream, const NameSurname& _name)
+{
+	_out_stream <<
+		OUT_W(' ', width_of_fields[3]) << _name.m_name <<
+		OUT_W(' ', width_of_fields[4]) << _name.m_surname;
+	return _out_stream;
+}
+
+istream& operator>>(istream& _in_stream, NameSurname& _obj)
+{
+	_obj.m_name = CheckableRead<string>(
+		DEF_BOOL(string),
+		"\t[Введите ИМЯ исполнителя]> "
+		);
+	_obj.m_surname = CheckableRead<string>(
+		DEF_BOOL(string),
+		"\t[Введите ФАМИЛИЮ исполнителя]> "
+		);
+
+	return _in_stream;
 }

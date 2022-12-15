@@ -29,4 +29,8 @@ public:
 
 	// Оператор ввода
 	friend istream& operator>> (istream& _in_stream, NameSurname& _obj);
+
+	// Get методы
+	string GetName()const;
+	string GetSurname()const;
 };
