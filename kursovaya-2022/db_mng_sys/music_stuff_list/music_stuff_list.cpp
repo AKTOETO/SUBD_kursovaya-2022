@@ -65,9 +65,8 @@ node<MusicStuff>* DataBaseManager::FindNodeToDelete(int _index)
 	// если индекс больше или равен размеру списка
 	if (_index >= m_default_db.get_size())
 	{
-		INFO(
-			string(__FUNCTION__) +
-			": индекс " + to_string(_index + 1) +
+		FUNC_INFO(
+			"индекс " + to_string(_index + 1) +
 			" больше или равен размеру списка " +
 			to_string(m_default_db.get_size())
 		);
