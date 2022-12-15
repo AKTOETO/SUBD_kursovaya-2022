@@ -60,7 +60,7 @@ void Menu::ProgramMenu()
 
 			// если введенное слово является командой
 			// и не был введен выход 
-			
+
 			if (
 				IsCommandCorrect(input_first_command) &&
 				input_first_command != CMD_NAME(0)
@@ -72,13 +72,10 @@ void Menu::ProgramMenu()
 			// если была введена не команда
 			else if (input_first_command != CMD_NAME(0))
 			{
-				INFO("\""+input_first_command+"\"" + NOT_CORRECT_COMMAND);
+				INFO("\"" + input_first_command + "\"" + NOT_CORRECT_COMMAND);
 			}
 		}
 
-		// очистка потока ввода от мусора
-		// НЕПРАВИЛЬНО РАБОТАЕТ
-		//ClearEnterSymbCin();
 	} while (input_first_command != CMD_NAME(0));
 }
 
@@ -190,7 +187,7 @@ void Menu::CheckCMDReadDB(string _str)
 		// иначе записываем информацию из файлв в консоль
 		else
 		{
-			m_music_list.ReadDBFromFile(fin);
+			m_db_manager.ReadDBFromFile(fin);
 		}
 
 		// закрытие файла
@@ -201,20 +198,52 @@ void Menu::CheckCMDReadDB(string _str)
 	{
 		INFO("Ввод с консоли:");
 		MusicStuff ms;
-		ms.SetStorage(CheckableRead<string>(DEF_BOOL(string), "Введите НОСИТЕЛЬ: "));
-		ms.SetSerialNumber(CheckableRead<int>(DEF_BOOL(int), "Введите ПОРЯДКОВЫЙ НОМЕР: "));
-		ms.SetName(CheckableRead<string>(DEF_BOOL(string), "Введите НАЗВАНИЕ ТРЕКА: "));
-		ms.SetArtistsName(CheckableRead<NameSurname>(DEF_BOOL(NameSurname), "Введите ИМЯ/ФАМИЛИЮ исполнителя: "));
-		ms.SetSoundTime(CheckableRead<int>(DEF_BOOL(int), "Введите ВРЕМЯ ЗВУЧАНИЯ: "));
-		ms.SetNumberOfPlays(CheckableRead<int>(DEF_BOOL(int), "Введите КОЛИЧЕСТВО ВОСПРОИЗВЕДЕНИЙ: "));
-		ms.SetPrice(CheckableRead<int>(DEF_BOOL(int), "Введите ЦЕНУ: "));
+		ms.SetStorage(
+			CheckableRead<string>(
+				DEF_BOOL(string),
+				"\t[Введите НОСИТЕЛЬ]> "
+				)
+		);
+		ms.SetSerialNumber(
+			CheckableRead<int>(
+				DEF_BOOL(int),
+				"\t[Введите ПОРЯДКОВЫЙ НОМЕР]> ")
+		);
+		ms.SetName(
+			CheckableRead<string>(
+				DEF_BOOL(string),
+				"\t[Введите НАЗВАНИЕ ТРЕКА]> ")
+		);
+		ms.SetArtistsName(
+			CheckableRead<NameSurname>(
+				DEF_BOOL(NameSurname),
+				"")
+		);
+		ms.SetSoundTime(
+			CheckableRead<int>(
+				DEF_BOOL(int),
+				"\t[Введите ВРЕМЯ ЗВУЧАНИЯ]> ")
+		);
+		ms.SetNumberOfPlays(
+			CheckableRead<int>(
+				DEF_BOOL(int),
+				"\t[Введите КОЛИЧЕСТВО ВОСПРОИЗВЕДЕНИЙ]> ")
+		);
+		ms.SetPrice(
+			CheckableRead<int>(
+				DEF_BOOL(int),
+				"\t[Введите ЦЕНУ]> ")
+		);
+
+		// очистка потока ввода от мусора
+		cin.ignore(INT_MAX, '\n');
 
 		// запись считанного элемента в список
-		m_music_list.ReadDBNodeFromNode(ms);
+		m_db_manager.ReadDBNodeFromNode(ms);
 	}
 	else
 	{
-		INFO("CHECKCMDREADDB: неизвестный ключ: \"" + temp+"\"");
+		INFO("CHECKCMDREADDB: неизвестный ключ: \"" + temp + "\"");
 	}
 }
 
@@ -229,7 +258,7 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 // проверка команды	ПЕЧАТЬДАННЫХ
 void Menu::CheckCMDPrintDBToConsole(string _str)
 {
-	m_music_list.PrintDBToConsole();
+	m_db_manager.PrintDBToConsole();
 	// ДОЛЖНО БЫТЬ НЕ ТАК
 	// НАДО ПРОСТО ВЫВОДИТЬ В КОНСОЛЬ, НИЧЕГО
 	// НЕ ВЫБИРАЯ ИФАМИ
@@ -257,7 +286,7 @@ void Menu::CheckCMDPrintDBToConsole(string _str)
 	//		temp = DB_OUTPUT_PATH;
 	//	}
 
-	//	m_music_list.PrintDBToConsole(fout);		
+	//	m_db_manager.PrintDBToConsole(fout);		
 
 	//	// закрытие файла
 	//	fout.close();
@@ -266,7 +295,7 @@ void Menu::CheckCMDPrintDBToConsole(string _str)
 	//else if (temp == "-к" || !temp.length())
 	//{
 	//	//TODO
-	//	m_music_list.PrintDBToConsole(cout);
+	//	m_db_manager.PrintDBToConsole(cout);
 	//}
 	//else
 	//{

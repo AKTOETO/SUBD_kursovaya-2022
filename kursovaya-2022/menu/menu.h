@@ -23,7 +23,7 @@ class Menu
 	Command* m_command;
 
 	// Список музыкальных товаров
-	DataBaseManager m_music_list;
+	DataBaseManager m_db_manager;
 
 	// Для быстрого доступа к полям структуры
 #define CMD_NAME(num) m_command[num].GetAttribute(0)

@@ -18,12 +18,11 @@ inline T CheckableRead(
 	= "Было введено некорректное значение"
 )
 {
-	// размер массива
+	// считываемый символ
 	T symb;
 
 	// вывод сообщения
-	cout << _welcome_str << "\n";
-
+	cout << _welcome_str;
 	// считывание из консоли
 	cin >> symb;
 
@@ -38,15 +37,6 @@ inline T CheckableRead(
 		symb = CheckableRead<T>(_comp, _welcome_str, _err_str);
 	}
 	return symb;
-}
-
-// очистка потока ввода
-inline void ClearEnterSymbCin()
-{
-	if (cin.peek() == '\n')
-	{
-		cin.get();
-	}
 }
 
 // является ли символ кириллическим

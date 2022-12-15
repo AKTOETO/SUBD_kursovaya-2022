@@ -10,8 +10,14 @@ ostream& operator<<(ostream& _out_stream, const NameSurname& _name)
 
 istream& operator>>(istream& _in_stream, NameSurname& _obj)
 {
-	_obj.m_name = CheckableRead<string>([](string str) {return true; }, "Введите ИМЯ исполнителя:");
-	_obj.m_surname = CheckableRead<string>([](string str) {return true; }, "Введите ФАМИЛИЮ исполнителя:");
+	_obj.m_name = CheckableRead<string>(
+		DEF_BOOL(string),
+		"\t[Введите ИМЯ исполнителя]> "
+		);
+	_obj.m_surname = CheckableRead<string>(
+		DEF_BOOL(string),
+		"\t[Введите ФАМИЛИЮ исполнителя]> "
+		);
 
 	return _in_stream;
 }
