@@ -47,19 +47,16 @@ inline string CheckableRead(
 )
 {
 	// считываемый символ
-	//T symb;
 	string str;
 
 	// вывод сообщения
 	cout << _welcome_str;
 	// считывание из консоли
-	//cin >> symb;
 	getline(cin, str);
 
 	// если было введено не то, что нужно было
 	if (!_comp(str))
 	{
-		// очистка потока
 		cout << _err_str << "\n";
 		// рекурсивный запрос значения
 		str = CheckableRead<FUNC>(_welcome_str, _comp, _err_str);
