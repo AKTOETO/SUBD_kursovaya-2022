@@ -3,10 +3,10 @@
 Menu::Menu()
 {
 	// выделение памяти под массив с описанием функций
-	m_command = new Command[NUMBERS_OF_COMMANDS];
+	m_command = new Command[NUMBER_OF_COMMANDS];
 
 	// чтение команд из файлов
-	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
+	for (int i = 0; i < NUMBER_OF_COMMANDS; i++)
 	{
 		m_command[i].FillCommandData(COMMAND_DESCRIPTION_FILES[i]);
 	}
@@ -84,7 +84,7 @@ void Menu::ProgramMenu()
 bool Menu::IsCommandCorrect(const string& _command)
 {
 	// проходимся по массиву команд
-	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
+	for (int i = 0; i < NUMBER_OF_COMMANDS; i++)
 	{
 		// если нашли совпадающую команду
 		// выводим 1
@@ -101,7 +101,7 @@ bool Menu::IsCommandCorrect(const string& _command)
 int Menu::GetNumberOfCommand(const string& _command)
 {
 	// проходимся по массиву команд
-	for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
+	for (int i = 0; i < NUMBER_OF_COMMANDS; i++)
 	{
 		// если нашли совпадающую команду
 		// выводим i
@@ -129,7 +129,7 @@ void Menu::CheckCMDHelp(string _str)
 	// тогда выводим все команды и информацию по ним
 	if (!_str.length())
 	{
-		for (int i = 0; i < NUMBERS_OF_COMMANDS; i++)
+		for (int i = 0; i < NUMBER_OF_COMMANDS; i++)
 		{
 			cout << ToUpperCase(CMD_NAME(i))
 				<< "\t\t" << CMD_SH_DECR(i)
@@ -281,6 +281,11 @@ void Menu::CheckCMDReadDB(string _str)
 // сохранение базы данных в файл
 void Menu::CheckCMDSaveDBToFile(string _str)
 {
+	if (!m_db_manager.GetSizeOfDataBase())
+	{
+		FUNC_INFO("база данных пуста");
+		return;
+	}
 	// место считывания информации
 	string temp = GetToken(_str);
 
@@ -328,6 +333,12 @@ void Menu::CheckCMDSaveDBToFile(string _str)
 // удаление элеемнта из базы данных
 void Menu::CheckCMDDeleteDBNode(string _str)
 {
+	if (!m_db_manager.GetSizeOfDataBase())
+	{
+		FUNC_INFO("база данных пуста");
+		return;
+	}
+
 	// как удалять: с помощью индекса
 	// или с помощью поля
 	string temp = GetToken(_str);
@@ -343,7 +354,7 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 		{
 			// запись индекса в виде числа
 			int index = atoi(temp.c_str()) - 1;
-			
+
 			// поиск элемента для удаления
 			node<MusicStuff>* nd = m_db_manager.FindNodeToDelete(index);
 
@@ -392,7 +403,54 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 	// если было введено удаление по полю
 	else if (temp == "-к")
 	{
+		// Вывод названий полей в базе данных
+		PrintFieldsOfDataBase();
 
+		// индекс поля
+		int number_of_field =
+			atoi(
+				CheckableRead(
+					"\t[По какому полю осуществлять выбор]> ",
+					[](string num)
+					{
+						return
+						IsThereANumber(num) &&
+						1 <= atoi(num.c_str()) &&
+						atoi(num.c_str()) <= NUMBER_OF_FIELDS;
+					}
+				).c_str()) - 1;
+
+		// получение списка значений поля
+		my_list<string> out = *m_db_manager.GetDataInField(number_of_field);
+
+		// печать списка
+		int ind = 1;
+		out.for_each([&ind](node<string>* el)
+			{
+				cout << "\t" << ind++ << ") " << el->get_data() << "\n";
+			}
+		);
+
+		// какое значение искать в поле
+		int number_of_value =
+			atoi(
+				CheckableRead(
+					"\t[Какое значение искать в поле]> ",
+					[&out](string num)
+					{
+						return
+						IsThereANumber(num) &&
+						1 <= atoi(num.c_str()) &&
+						atoi(num.c_str()) <= out.get_size();
+					}
+				).c_str()) - 1;
+		cout << "\n[Удалятся следующие элементы]> \n";
+		// удаление элементов из списка с индексом поля
+		// number_of_field и его значением под индексом number_of_value
+		m_db_manager.DeleteDBNode(
+			number_of_field,
+			out.get_element_by_index(number_of_value)->get_data()
+		);
 	}
 	else
 	{
@@ -404,6 +462,11 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 // проверка команды	ПЕЧАТЬДАННЫХ
 void Menu::CheckCMDPrintDBToConsole(string _str)
 {
+	if (!m_db_manager.GetSizeOfDataBase())
+	{
+		FUNC_INFO("база данных пуста");
+		return;
+	}
 	m_db_manager.PrintDBToConsole();
 }
 

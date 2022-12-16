@@ -104,6 +104,22 @@ void DataBaseManager::DeleteDBNode(node<MusicStuff>* _node)
 	IndexesRecalculation();
 }
 
+void DataBaseManager::DeleteDBNode(int _field_index, string _value)
+{
+	node<MusicStuff>* temp = m_default_db.get_begin();
+	while (temp)
+	{
+		node<MusicStuff>* next = temp->get_next();
+		if (temp->get_data().GetField(_field_index).GetValue() == _value)
+		{
+			cout << temp->get_data() << endl;
+			m_default_db.delete_node(temp);
+		}
+		temp = next;
+	}
+	IndexesRecalculation();
+}
+
 void DataBaseManager::ReadDBFromFile(ifstream& _read_stream)
 {
 	// очистка базы данных перед чтением
@@ -145,6 +161,26 @@ void DataBaseManager::PrintDBToConsole() const
 	}
 }
 
+my_list<string>* DataBaseManager::GetDataInField(int _index) const
+{
+	// выходной список
+	my_list<string>* out = new my_list<string>;
+
+	// элемент для прохода всего списка
+	node<MusicStuff>* el =  m_default_db.get_begin();
+	
+	while (el)
+	{
+		string str = el->get_data().GetField(_index).GetValue();
+		if (!out->is_there_element(str))
+		{
+			out->push(str);
+		}
+		el = el->get_next();
+	}
+	return out;
+}
+
 void DataBaseManager::ClearDB()
 {
 }
@@ -165,7 +201,8 @@ void DataBaseManager::IndexesRecalculation()
 	{
 		MusicStuff temp_ms = temp->get_data();
 		temp_ms.SetSerialNumber(index);
-		temp->set_data(temp_ms);
+		
+		temp->set_data(temp_ms);// на этой строке ошибка
 
 		index++;
 		temp = temp->get_next();

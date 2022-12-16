@@ -1,17 +1,45 @@
 #pragma once
 #include "../../support_func/support_func.hpp"
 #include "../name_surname/name_surname.h"
+#include "../../../list/my_list/my_list.hpp"
+
+// поле базы данных
+struct FieldsType
+{
+	int* m_number;
+	string* m_string;
+
+	FieldsType();
+	~FieldsType();
+
+	FieldsType(const FieldsType&);
+
+	string GetValue();
+};
 
 class MusicStuff
 {
 private:
-	string m_storage;			// носитель
-	int m_serial_number;		// порядковый номер
-	string m_name;				// название
-	NameSurname m_artist_name;	// имя исполнителя
-	int m_sound_time;			// время звучания в минутах
-	int m_number_of_plays;		// количество воспросизведений
-	int m_price;				// цена
+	// носитель
+	// порядковый номер
+	// название
+	// имя исполнителя
+	// время звучания в минутах
+	// количество воспросизведений
+	// цена
+
+	// поля базы данных
+	FieldsType* m_fields;
+
+	// для упрощенного доступа к полям
+#define STORAGE				m_fields[0].m_string
+#define SERIAL_NUMBER		m_fields[1].m_number
+#define NAME				m_fields[2].m_string
+#define ARTIST_NAME			m_fields[3].m_string
+#define ARTIST_SURNAME		m_fields[4].m_string
+#define SOUND_TIME			m_fields[5].m_number
+#define NUMBER_OF_PLAYS		m_fields[6].m_number
+#define PRICE				m_fields[7].m_number
 
 public:
 
@@ -30,6 +58,9 @@ public:
 	// оператор вывода в консоль
 	friend ostream& operator<<(ostream& _out_stream, const MusicStuff& _music_stuff);
 
+	// оператор присваивания
+	MusicStuff& operator= (const MusicStuff& _obj);
+
 	// Set методы
 	void SetStorage(string);
 	void SetSerialNumber(int);
@@ -44,11 +75,14 @@ public:
 	string GetStorage() const;
 	int GetSerialNumber() const;
 	string GetName() const;
-	NameSurname GetArtistsName() const;
+	string GetArtistsName() const;
+	string GetArtistsSurname() const;
 	int GetSoundTime() const;
 	int GetNumberOfPlays() const;
 	int GetPrice() const;
 
-	string GetFormattedFormToSaveToFile() const;
+	FieldsType GetField(int index) const;
 
+	string GetFormattedFormToSaveToFile() const;
 };
+

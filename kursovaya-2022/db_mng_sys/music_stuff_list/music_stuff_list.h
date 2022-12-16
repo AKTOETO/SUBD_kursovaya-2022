@@ -44,9 +44,13 @@ public:
 	void DeleteDBNode(string _str);
 	void DeleteDBNode(int _index);
 	void DeleteDBNode(node<MusicStuff>* _node);
+	void DeleteDBNode(int _field_index, string _value);
 
 	// печать в поток
 	void PrintDBToConsole() const;
+
+	// печать значений поля по индексу
+	my_list<string>* GetDataInField(int _index) const;
 
 	// очистить базу данных
 	void ClearDB();

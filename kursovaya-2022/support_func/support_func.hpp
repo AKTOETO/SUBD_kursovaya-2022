@@ -94,6 +94,15 @@ inline string GetToken(string& _str, char _delim = ' ')
 	return new_str;
 }
 
+// печать всех названий полей
+inline void PrintFieldsOfDataBase()
+{
+	for (int i = 0; i < NUMBER_OF_FIELDS; i++)
+	{
+		cout << "\t" << i+1 << ") " << NAMES_OF_FIELDS[i] << "\n";
+	}
+}
+
 // проверка на корректность данных
 inline string IsStringNotEmpty(const string& _str)
 {

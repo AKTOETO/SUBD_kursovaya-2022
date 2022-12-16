@@ -1,29 +1,44 @@
 ﻿#include "music_stuff.h"
 
 MusicStuff::MusicStuff()
-	:m_storage(NOT_CORRECT_DATA),
-	m_serial_number(0),
-	m_name(NOT_CORRECT_DATA),
-	m_artist_name(),
-	m_sound_time(0),
-	m_number_of_plays(0),
-	m_price(0)
 {
+	/*m_storage.m_string = new string;
+	m_serial_number.m_string = new string;
+	m_name.m_string = new string;
+	m_artist_name.m_namesurname = new NameSurname;
+	m_sound_time.m_number = new int;
+	m_number_of_plays.m_number = new int;
+	m_price.m_number = new int;*/
+
+	m_fields = new FieldsType[NUMBER_OF_FIELDS];
+
+	m_fields[0].m_string = new string;		// носитель
+	m_fields[1].m_number = new int;			// порядковый номер
+	m_fields[2].m_string = new string;		// название
+	m_fields[3].m_string = new string;		// имя исполнителя
+	m_fields[4].m_string = new string;		// фамилия исполнителя
+	m_fields[5].m_number = new int;			// время звучания в минутах
+	m_fields[6].m_number = new int;			// количество воспросизведений
+	m_fields[7].m_number = new int;			// цена
 }
 
 MusicStuff::MusicStuff(const MusicStuff& _obj)
+	:MusicStuff()
 {
-	m_storage = _obj.m_storage;
-	m_serial_number = _obj.m_serial_number;
-	m_name = _obj.m_name;
-	m_artist_name = _obj.m_artist_name;
-	m_sound_time = _obj.m_sound_time;
-	m_number_of_plays = _obj.m_number_of_plays;
-	m_price = _obj.m_price;
+	*this = _obj;
+	/**STORAGE		 = *_obj.STORAGE;
+	*SERIAL_NUMBER	 = *_obj.SERIAL_NUMBER;
+	*NAME			 = *_obj.NAME;
+	*ARTIST_NAME	 = *_obj.ARTIST_NAME;
+	*ARTIST_SURNAME	 = *_obj.ARTIST_SURNAME;
+	*SOUND_TIME		 = *_obj.SOUND_TIME;
+	*NUMBER_OF_PLAYS = *_obj.NUMBER_OF_PLAYS;
+	*PRICE			 = *_obj.PRICE;*/
 }
 
 MusicStuff::MusicStuff(string& _input_string)
-{
+	:MusicStuff()
+{	
 	// Cтруктура данных при считывании из потока ввода должна выглядеть так
 	// Предполагается, что максимальная длина строки с данными не превышает
 	// 
@@ -31,125 +46,191 @@ MusicStuff::MusicStuff(string& _input_string)
 	// ....
 	// <ПОР.НОМЕР>:<НОСИТЕЛЬ>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛН.>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
 
-	//_input_string += ":";
-
 	// заполнение класса MusicStuff
-	m_serial_number = GET_INT_DATA(_input_string);
-	m_storage = GET_DATA(_input_string);
-	m_name = GET_DATA(_input_string);
-	m_artist_name = {
-		GET_DATA(_input_string),
-		GET_DATA(_input_string)
-	};
-	m_sound_time = GET_INT_DATA(_input_string);
-	m_number_of_plays = GET_INT_DATA(_input_string);
-	m_price = GET_INT_DATA(_input_string);
+	*SERIAL_NUMBER = GET_INT_DATA(_input_string);
+	*STORAGE = GET_DATA(_input_string);
+	*NAME = GET_DATA(_input_string);
+	*ARTIST_NAME = GET_DATA(_input_string);
+	*ARTIST_SURNAME = GET_DATA(_input_string);
+	*SOUND_TIME = GET_INT_DATA(_input_string);
+	*NUMBER_OF_PLAYS = GET_INT_DATA(_input_string);
+	*PRICE = GET_INT_DATA(_input_string);
 }
 
 MusicStuff::~MusicStuff()
 {
+	delete[] m_fields;
 }
 
 ostream& operator<<(ostream& _out_stream, const MusicStuff& _music_stuff)
 {
 	_out_stream
-		<< "|" << OUT_W(' ', width_of_fields[0]) << _music_stuff.m_serial_number
-		<< "|" << OUT_W(' ', width_of_fields[1]) << _music_stuff.m_storage
-		<< "|" << OUT_W(' ', width_of_fields[2]) << _music_stuff.m_name
-		<< "|" << _music_stuff.m_artist_name
-		<< "|" << OUT_W(' ', width_of_fields[5]) << _music_stuff.m_sound_time
-		<< "|" << OUT_W(' ', width_of_fields[6]) << _music_stuff.m_number_of_plays
-		<< "|" << OUT_W(' ', width_of_fields[7]) << _music_stuff.m_price
+		<< "|" << OUT_W(' ', width_of_fields[0]) << *_music_stuff.SERIAL_NUMBER
+		<< "|" << OUT_W(' ', width_of_fields[1]) << *_music_stuff.STORAGE
+		<< "|" << OUT_W(' ', width_of_fields[2]) << *_music_stuff.NAME
+		<< "|" << OUT_W(' ', width_of_fields[3]) << *_music_stuff.ARTIST_NAME
+		<< "|" << OUT_W(' ', width_of_fields[4]) << *_music_stuff.ARTIST_SURNAME
+		<< "|" << OUT_W(' ', width_of_fields[5]) << *_music_stuff.SOUND_TIME
+		<< "|" << OUT_W(' ', width_of_fields[6]) << *_music_stuff.NUMBER_OF_PLAYS
+		<< "|" << OUT_W(' ', width_of_fields[7]) << *_music_stuff.PRICE
 		<< "|";
 
 	return _out_stream;
 }
 
+MusicStuff& MusicStuff::operator=(const MusicStuff& _obj)
+{
+
+	*STORAGE			= *_obj.STORAGE;
+	*SERIAL_NUMBER		= *_obj.SERIAL_NUMBER;
+	*NAME				= *_obj.NAME;
+	*ARTIST_NAME		= *_obj.ARTIST_NAME;
+	*ARTIST_SURNAME		= *_obj.ARTIST_SURNAME;
+	*SOUND_TIME			= *_obj.SOUND_TIME;
+	*NUMBER_OF_PLAYS	= *_obj.NUMBER_OF_PLAYS;
+	*PRICE				= *_obj.PRICE;
+
+	return *this;
+}
+
 void MusicStuff::SetStorage(string _str)
 {
-	m_storage = _str;
+	*STORAGE = _str;
 }
 
 void MusicStuff::SetSerialNumber(int _num)
 {
-	m_serial_number = _num;
+	*SERIAL_NUMBER = _num;
 }
 
 void MusicStuff::SetName(string _str)
 {
-	m_name = _str;
+	*NAME = _str;
 }
 
 void MusicStuff::SetArtistsName(string _str)
 {
-	m_artist_name.SetName(_str);
+	*ARTIST_NAME = _str;
 }
 
 void MusicStuff::SetArtistsSurname(string _str)
 {
-	m_artist_name.SetSurname(_str);
+	*ARTIST_SURNAME = _str;
 }
 
 void MusicStuff::SetSoundTime(int _num)
 {
-	m_sound_time = _num;
+	*SOUND_TIME = _num;
 }
 
 void MusicStuff::SetNumberOfPlays(int _num)
 {
-	m_number_of_plays = _num;
+	*NUMBER_OF_PLAYS = _num;
 }
 
 void MusicStuff::SetPrice(int _num)
 {
-	m_price = _num;
+	*PRICE = _num;
 }
 
 string MusicStuff::GetStorage() const
 {
-	return m_storage;
+	return *STORAGE;
 }
 
 int MusicStuff::GetSerialNumber() const
 {
-	return m_serial_number;
+	return *SERIAL_NUMBER;
 }
 
 string MusicStuff::GetName() const
 {
-	return m_name;
+	return *NAME;
 }
 
-NameSurname MusicStuff::GetArtistsName() const
+string MusicStuff::GetArtistsName() const
 {
-	return m_artist_name;
+	return *ARTIST_NAME;
+}
+
+string MusicStuff::GetArtistsSurname() const
+{
+	return *ARTIST_SURNAME;
 }
 
 int MusicStuff::GetSoundTime() const
 {
-	return m_sound_time;
+	return *SOUND_TIME;
 }
 
 int MusicStuff::GetNumberOfPlays() const
 {
-	return m_number_of_plays;
+	return *NUMBER_OF_PLAYS;
 }
 
 int MusicStuff::GetPrice() const
 {
-	return m_price;
+	return *PRICE;
+}
+
+FieldsType MusicStuff::GetField(int index) const
+{
+	if (0 <= index && index <= NUMBER_OF_FIELDS)
+	{
+		return m_fields[index];
+	}
+	return FieldsType();
 }
 
 string MusicStuff::GetFormattedFormToSaveToFile() const
 {
 	return string(
-		to_string(m_serial_number) + ':' +
-		m_storage + ':' +
-		m_name + ':' +
-		m_artist_name.GetName() + ':' +
-		m_artist_name.GetSurname() + ':' +
-		to_string(m_sound_time) + ':' +
-		to_string(m_number_of_plays) + ':' +
-		to_string(m_price)
+		to_string(*SERIAL_NUMBER) + ':' +
+		*STORAGE + ':' +
+		*NAME + ':' +
+		*ARTIST_NAME + ':' +
+		*ARTIST_SURNAME + ':' +
+		to_string(*SOUND_TIME) + ':' +
+		to_string(*NUMBER_OF_PLAYS) + ':' +
+		to_string(*PRICE)
 	);
+}
+
+FieldsType::FieldsType()
+	:m_number(NULL), m_string(NULL)
+{
+}
+
+FieldsType::~FieldsType()
+{
+	if(m_number != NULL)
+		delete m_number;
+	if(m_string != NULL)
+		delete m_string;
+}
+
+FieldsType::FieldsType(const FieldsType& _obj)
+	:FieldsType()
+{
+	if (_obj.m_number)
+	{
+		if (m_number) delete m_number;
+		m_number = new int;
+		*m_number = *_obj.m_number;
+	}
+	if (_obj.m_string)
+	{
+		if (m_string) delete m_string;
+		m_string = new string;
+		*m_string = *_obj.m_string;
+	}
+}
+
+string FieldsType::GetValue()
+{
+	if (m_number)
+		return to_string(*m_number);
+	if (m_string)
+		return *m_string;
+	return "";
 }

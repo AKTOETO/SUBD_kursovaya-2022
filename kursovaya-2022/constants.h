@@ -15,9 +15,21 @@ using namespace std;
 // вывод сообщения от имени функции
 #define FUNC_INFO(str) cout<<"\t" + string(__FUNCTION__) +": " str + "\n";
 
-// Показывать логотип в начале
-// Если не нужно показывать, закоментировать строку
-//#define SHOW_LOGO
+// Количество полей в базе данных
+const int NUMBER_OF_FIELDS = 8;
+
+// названия полей
+const string NAMES_OF_FIELDS[NUMBER_OF_FIELDS] =
+{
+	"носитель",
+	"порядковый номер",
+	"название",
+	"имя исполнителя",
+	"фамилия исполнителя",
+	"время звучания",
+	"количество воспроизведений",
+	"цена",
+};
 
 // логотип
 const string PATH_TO_LOGO_FOLDER = "assets/logo_slides/";
@@ -35,10 +47,10 @@ DBMS_CONSOLE_REQUEST_COMMAND +
 Если неизвестны команды, введите \"помощь\"\n\n";
 
 // количество команд
-const int NUMBERS_OF_COMMANDS = 6;
+const int NUMBER_OF_COMMANDS = 6;
 
 // массив с файлами, в которых лежит описание команд
-const string COMMAND_DESCRIPTION_FILES[NUMBERS_OF_COMMANDS] =
+const string COMMAND_DESCRIPTION_FILES[NUMBER_OF_COMMANDS] =
 {
 	"exit.txt",
 	"help.txt",
@@ -72,10 +84,10 @@ const string DB_FILE_PATH = DB_FOLDER_PATH + "db.txt";
 
 // шапка таблицы
 const string table_cap = "| НОМЕР | НОСИТЕЛЬ | НАЗВАНИЕ |\
- ИМЯ/ФАМИЛИЯ ИСПОЛНИТЕЛЯ | ВРЕМЯ | КОЛ-ВО ВОСПР. | ЦЕНА |\n";
+ ИМЯ ИСПОЛНИТЕЛЯ | ФАМИЛИЯ ИСПОЛНИТЕЛЯ | ВРЕМЯ | КОЛ-ВО ВОСПР. | ЦЕНА |\n";
 
 // ширина полей таблицы при выводе
-const int width_of_fields[8] =
+const int width_of_fields[9] =
 {
-	7,10,10,12,13,7,15,6
+	7,10,10,17,21,7,15,6
 };
