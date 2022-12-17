@@ -1,7 +1,7 @@
 #pragma once
 #include "../music_stuff/music_stuff.h"
 #include "../../../list/my_list/my_list.hpp"
-
+	
 class DataBaseManager
 {
 	// база данных со всеми данными
@@ -25,6 +25,9 @@ public:
 	// получение размера списка
 	int GetSizeOfDataBase() const;
 
+	// получение списка элементов с полем определенного значения
+	my_list<node<MusicStuff>*>* GetSelectedList(int _field_index, string _value);
+
 	// сохранение базы данных в файл
 	void SaveDBToFile(ostream& _out_stream);
 
@@ -44,7 +47,7 @@ public:
 	void DeleteDBNode(string _str);
 	void DeleteDBNode(int _index);
 	void DeleteDBNode(node<MusicStuff>* _node);
-	void DeleteDBNode(int _field_index, string _value);
+	void DeleteDBNode(my_list<node<MusicStuff>*>*);
 
 	// печать в поток
 	void PrintDBToConsole() const;

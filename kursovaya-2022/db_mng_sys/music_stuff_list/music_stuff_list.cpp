@@ -34,6 +34,29 @@ int DataBaseManager::GetSizeOfDataBase() const
 	return m_default_db.get_size();
 }
 
+my_list<node<MusicStuff>*>* DataBaseManager::GetSelectedList(int _field_index, string _value)
+{
+	// выходной список
+	my_list<node<MusicStuff>*>* out = new my_list<node<MusicStuff>*>;
+
+	// элемент для прохождения по списку
+	node<MusicStuff>* temp = m_default_db.get_begin();
+
+	// проходимся по всей базе данных и 
+	// отбираем элементы со значением _value
+	// в поле с индексом _field_index
+	while (temp)
+	{
+		if (temp->get_data().GetField(_field_index).GetValue() == _value)
+		{
+			out->push(temp);
+		}
+		temp = temp->get_next();
+	}
+
+	return out;
+}
+
 void DataBaseManager::SaveDBToFile(ostream& _out_stream)
 {
 	node<MusicStuff>* el = m_default_db.get_begin();
@@ -53,11 +76,15 @@ void DataBaseManager::ReadDBNodeFromString(string _str)
 {
 	// добавление элемента в список
 	m_default_db.push(_str);
+
+	IndexesRecalculation();
 }
 
 void DataBaseManager::ReadDBNodeFromNode(MusicStuff _obj)
 {
 	m_default_db.push(_obj);
+
+	IndexesRecalculation();
 }
 
 node<MusicStuff>* DataBaseManager::FindNodeToDelete(int _index)
@@ -104,19 +131,18 @@ void DataBaseManager::DeleteDBNode(node<MusicStuff>* _node)
 	IndexesRecalculation();
 }
 
-void DataBaseManager::DeleteDBNode(int _field_index, string _value)
-{
-	node<MusicStuff>* temp = m_default_db.get_begin();
-	while (temp)
+void DataBaseManager::DeleteDBNode(my_list<node<MusicStuff>*>* _lst)
+{	
+	node<node<MusicStuff>*>* el = _lst->get_begin();
+	while (el)
 	{
-		node<MusicStuff>* next = temp->get_next();
-		if (temp->get_data().GetField(_field_index).GetValue() == _value)
-		{
-			cout << temp->get_data() << endl;
-			m_default_db.delete_node(temp);
-		}
-		temp = next;
+		node<node<MusicStuff>*>* next = el->get_next();
+		//delete el->get_data();
+		m_default_db.delete_node(el->get_data());
+		_lst->delete_node(el);
+		el = next;
 	}
+
 	IndexesRecalculation();
 }
 
@@ -167,8 +193,8 @@ my_list<string>* DataBaseManager::GetDataInField(int _index) const
 	my_list<string>* out = new my_list<string>;
 
 	// элемент для прохода всего списка
-	node<MusicStuff>* el =  m_default_db.get_begin();
-	
+	node<MusicStuff>* el = m_default_db.get_begin();
+
 	while (el)
 	{
 		string str = el->get_data().GetField(_index).GetValue();
@@ -183,6 +209,7 @@ my_list<string>* DataBaseManager::GetDataInField(int _index) const
 
 void DataBaseManager::ClearDB()
 {
+	m_default_db.clear();
 }
 
 void DataBaseManager::SortDB(string _str)
@@ -201,7 +228,7 @@ void DataBaseManager::IndexesRecalculation()
 	{
 		MusicStuff temp_ms = temp->get_data();
 		temp_ms.SetSerialNumber(index);
-		
+
 		temp->set_data(temp_ms);// на этой строке ошибка
 
 		index++;

@@ -18,6 +18,7 @@ Menu::Menu()
 	m_command[3].SetCheckFunction(&Menu::CheckCMDPrintDBToConsole);
 	m_command[4].SetCheckFunction(&Menu::CheckCMDSaveDBToFile);
 	m_command[5].SetCheckFunction(&Menu::CheckCMDDeleteDBNode);
+	m_command[6].SetCheckFunction(&Menu::CheckCMDClearDB);
 }
 
 Menu::~Menu()
@@ -364,13 +365,15 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 				return;
 			}
 
-			// если не должны задавать вопросов
+			// получение токена
 			temp = GetToken(_str);
 
+			// удаляем без диалогов
 			if (temp == "-с")
 			{
 				m_db_manager.DeleteDBNode(nd);
 			}
+			// удаляем с диалогом с пользователем
 			else
 			{
 				// уточнение у пользователя
@@ -391,6 +394,10 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 				if (answ == "да")
 				{
 					m_db_manager.DeleteDBNode(nd);
+				}
+				else
+				{
+					INFO("Элемнет не удалены")
 				}
 			}
 		}
@@ -444,13 +451,42 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 						atoi(num.c_str()) <= out.get_size();
 					}
 				).c_str()) - 1;
-		cout << "\n[Удалятся следующие элементы]> \n";
-		// удаление элементов из списка с индексом поля
-		// number_of_field и его значением под индексом number_of_value
-		m_db_manager.DeleteDBNode(
+
+		// выборка элементов списка с определенным
+		// значением определенного поля
+		auto lst = m_db_manager.GetSelectedList(
 			number_of_field,
 			out.get_element_by_index(number_of_value)->get_data()
 		);
+
+		cout << "\n[Удалятся следующие элементы]> \n";
+
+		// печать списка
+		lst->for_each([](auto _el)
+			{
+				cout << _el->get_data()->get_data() << endl;
+			}
+		);
+
+		// получение ответа
+		string answ = CheckableRead(
+			"\t[Готовы ли вы удалить их? (да/нет)]> ",
+			[](string str)
+			{
+				return ToLowerCase(str) == "да" || ToLowerCase(str) == "нет";
+			}
+		);
+
+		if(answ == "да")
+		{
+			// удаление элементов из списка с индексом поля
+			// number_of_field и его значением под индексом number_of_value
+			m_db_manager.DeleteDBNode(lst);
+		}
+		else
+		{
+			INFO("Элемнеты не удалены")
+		}
 	}
 	else
 	{
@@ -472,6 +508,8 @@ void Menu::CheckCMDPrintDBToConsole(string _str)
 
 void Menu::CheckCMDClearDB(string _str)
 {
+	INFO("База данных очищена")
+	m_db_manager.ClearDB();
 }
 
 void Menu::CheckCMDSelectFromDB(string _str)
