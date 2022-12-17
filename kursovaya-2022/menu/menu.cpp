@@ -19,6 +19,7 @@ Menu::Menu()
 	m_command[4].SetCheckFunction(&Menu::CheckCMDSaveDBToFile);
 	m_command[5].SetCheckFunction(&Menu::CheckCMDDeleteDBNode);
 	m_command[6].SetCheckFunction(&Menu::CheckCMDClearDB);
+	m_command[7].SetCheckFunction(&Menu::CheckCMDSelectFromDB);
 }
 
 Menu::~Menu()
@@ -410,63 +411,8 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 	// если было введено удаление по полю
 	else if (temp == "-к")
 	{
-		// Вывод названий полей в базе данных
-		PrintFieldsOfDataBase();
-
-		// индекс поля
-		int number_of_field =
-			atoi(
-				CheckableRead(
-					"\t[По какому полю осуществлять выбор]> ",
-					[](string num)
-					{
-						return
-						IsThereANumber(num) &&
-						1 <= atoi(num.c_str()) &&
-						atoi(num.c_str()) <= NUMBER_OF_FIELDS;
-					}
-				).c_str()) - 1;
-
-		// получение списка значений поля
-		my_list<string> out = *m_db_manager.GetDataInField(number_of_field);
-
-		// печать списка
-		int ind = 1;
-		out.for_each([&ind](node<string>* el)
-			{
-				cout << "\t" << ind++ << ") " << el->get_data() << "\n";
-			}
-		);
-
-		// какое значение искать в поле
-		int number_of_value =
-			atoi(
-				CheckableRead(
-					"\t[Какое значение искать в поле]> ",
-					[&out](string num)
-					{
-						return
-						IsThereANumber(num) &&
-						1 <= atoi(num.c_str()) &&
-						atoi(num.c_str()) <= out.get_size();
-					}
-				).c_str()) - 1;
-
-		// выборка элементов списка с определенным
-		// значением определенного поля
-		auto lst = m_db_manager.GetSelectedList(
-			number_of_field,
-			out.get_element_by_index(number_of_value)->get_data()
-		);
-
-		cout << "\n[Удалятся следующие элементы]> \n";
-
-		// печать списка
-		lst->for_each([](auto _el)
-			{
-				cout << _el->get_data()->get_data() << endl;
-			}
-		);
+		// процедура выборки
+		CheckCMDSelectFromDB("");
 
 		// получение ответа
 		string answ = CheckableRead(
@@ -479,9 +425,8 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 
 		if(answ == "да")
 		{
-			// удаление элементов из списка с индексом поля
-			// number_of_field и его значением под индексом number_of_value
-			m_db_manager.DeleteDBNode(lst);
+			// удаление выбранных элементов из списка
+			m_db_manager.DeleteDBSelectedList();
 		}
 		else
 		{
@@ -514,4 +459,68 @@ void Menu::CheckCMDClearDB(string _str)
 
 void Menu::CheckCMDSelectFromDB(string _str)
 {
+	if (!m_db_manager.GetSizeOfDataBase())
+	{
+		FUNC_INFO("база данных пуста");
+		return;
+	}
+
+	// Вывод названий полей в базе данных
+	PrintFieldsOfDataBase();
+
+	// индекс поля
+	int number_of_field =
+		atoi(
+			CheckableRead(
+				"\t[По какому полю осуществлять выбор]> ",
+				[](string num)
+				{
+					return
+					IsThereANumber(num) &&
+					1 <= atoi(num.c_str()) &&
+					atoi(num.c_str()) <= NUMBER_OF_FIELDS;
+				}
+	).c_str()) - 1;
+
+	// получение списка значений поля
+	my_list<string> out = *m_db_manager.GetDataInField(number_of_field);
+
+	// печать списка
+	int ind = 1;
+	out.for_each([&ind](node<string>* el)
+		{
+			cout << "\t" << ind++ << ") " << el->get_data() << "\n";
+		}
+	);
+
+	// какое значение искать в поле
+	int number_of_value =
+		atoi(
+			CheckableRead(
+				"\t[Какое значение искать в поле]> ",
+				[&out](string num)
+				{
+					return
+					IsThereANumber(num) &&
+					1 <= atoi(num.c_str()) &&
+					atoi(num.c_str()) <= out.get_size();
+				}
+	).c_str()) - 1;
+
+	// выборка элементов списка с определенным
+	// значением определенного поля
+	m_db_manager.SelectDB
+	(
+		number_of_field,
+		out.get_element_by_index(number_of_value)->get_data()
+	);
+
+	cout << "\n[Выбраны следующие элементы]> \n";
+
+	// печать списка
+	m_db_manager.GetSelectedList()->for_each([](auto _el)
+		{
+			cout << _el->get_data()->get_data() << endl;
+		}
+	);
 }

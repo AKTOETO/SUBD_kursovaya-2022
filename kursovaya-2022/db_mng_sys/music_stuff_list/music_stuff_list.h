@@ -7,6 +7,9 @@ class DataBaseManager
 	// база данных со всеми данными
 	my_list<MusicStuff> m_default_db;
 
+	// списоск с выбранными элеметами
+	my_list<node<MusicStuff>*>* m_selected_nodes;
+
 public:
 	//  онструктор по умолчанию
 	DataBaseManager();
@@ -26,7 +29,7 @@ public:
 	int GetSizeOfDataBase() const;
 
 	// получение списка элементов с полем определенного значени€
-	my_list<node<MusicStuff>*>* GetSelectedList(int _field_index, string _value);
+	my_list<node<MusicStuff>*>* GetSelectedList() const;
 
 	// сохранение базы данных в файл
 	void SaveDBToFile(ostream& _out_stream);
@@ -47,7 +50,7 @@ public:
 	void DeleteDBNode(string _str);
 	void DeleteDBNode(int _index);
 	void DeleteDBNode(node<MusicStuff>* _node);
-	void DeleteDBNode(my_list<node<MusicStuff>*>*);
+	void DeleteDBSelectedList();
 
 	// печать в поток
 	void PrintDBToConsole() const;
@@ -62,7 +65,7 @@ public:
 	void SortDB(string _str);
 
 	// выборка элементов
-	void SelectDB(string _str);
+	void SelectDB(int _field_index, string _value);
 
 	// перерасчет индексов
 	void IndexesRecalculation();

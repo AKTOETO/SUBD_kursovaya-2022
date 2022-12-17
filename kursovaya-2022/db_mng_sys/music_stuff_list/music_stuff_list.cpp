@@ -2,10 +2,12 @@
 
 DataBaseManager::DataBaseManager()
 {
+	m_selected_nodes = NULL;
 }
 
 DataBaseManager::~DataBaseManager()
 {
+	delete m_selected_nodes;
 }
 
 node<MusicStuff>* DataBaseManager::GetLastNode() const
@@ -34,27 +36,9 @@ int DataBaseManager::GetSizeOfDataBase() const
 	return m_default_db.get_size();
 }
 
-my_list<node<MusicStuff>*>* DataBaseManager::GetSelectedList(int _field_index, string _value)
+my_list<node<MusicStuff>*>* DataBaseManager::GetSelectedList() const
 {
-	// выходной список
-	my_list<node<MusicStuff>*>* out = new my_list<node<MusicStuff>*>;
-
-	// элемент для прохождения по списку
-	node<MusicStuff>* temp = m_default_db.get_begin();
-
-	// проходимся по всей базе данных и 
-	// отбираем элементы со значением _value
-	// в поле с индексом _field_index
-	while (temp)
-	{
-		if (temp->get_data().GetField(_field_index).GetValue() == _value)
-		{
-			out->push(temp);
-		}
-		temp = temp->get_next();
-	}
-
-	return out;
+	return m_selected_nodes;
 }
 
 void DataBaseManager::SaveDBToFile(ostream& _out_stream)
@@ -131,15 +115,14 @@ void DataBaseManager::DeleteDBNode(node<MusicStuff>* _node)
 	IndexesRecalculation();
 }
 
-void DataBaseManager::DeleteDBNode(my_list<node<MusicStuff>*>* _lst)
+void DataBaseManager::DeleteDBSelectedList()
 {	
-	node<node<MusicStuff>*>* el = _lst->get_begin();
+	node<node<MusicStuff>*>* el = m_selected_nodes->get_begin();
 	while (el)
 	{
 		node<node<MusicStuff>*>* next = el->get_next();
-		//delete el->get_data();
 		m_default_db.delete_node(el->get_data());
-		_lst->delete_node(el);
+		m_selected_nodes->delete_node(el);
 		el = next;
 	}
 
@@ -216,8 +199,25 @@ void DataBaseManager::SortDB(string _str)
 {
 }
 
-void DataBaseManager::SelectDB(string _str)
+void DataBaseManager::SelectDB(int _field_index, string _value)
 {
+	// выходной список
+	m_selected_nodes = new my_list<node<MusicStuff>*>;
+
+	// элемент для прохождения по списку
+	node<MusicStuff>* temp = m_default_db.get_begin();
+
+	// проходимся по всей базе данных и 
+	// отбираем элементы со значением _value
+	// в поле с индексом _field_index
+	while (temp)
+	{
+		if (temp->get_data().GetField(_field_index).GetValue() == _value)
+		{
+			m_selected_nodes->push(temp);
+		}
+		temp = temp->get_next();
+	}
 }
 
 void DataBaseManager::IndexesRecalculation()

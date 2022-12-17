@@ -47,7 +47,7 @@ DBMS_CONSOLE_REQUEST_COMMAND +
 Если неизвестны команды, введите \"помощь\"\n\n";
 
 // количество команд
-const int NUMBER_OF_COMMANDS = 7;
+const int NUMBER_OF_COMMANDS = 8;
 
 // ПРИ ДОБАВЛЕНИИ КОМАНДЫ НАДО ЕЩЕ ДОБАВИТЬ 
 // В COMMAND_CHECK_FUNCTIONS УКАЗАТЕЛИ НА СОТВЕТСТВУЮЩИЕ 
@@ -61,7 +61,8 @@ const string COMMAND_DESCRIPTION_FILES[NUMBER_OF_COMMANDS] =
 	"print.txt",
 	"save.txt",
 	"delete.txt",
-	"clear.txt"
+	"clear.txt",
+	"select.txt"
 };
 
 
