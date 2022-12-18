@@ -20,6 +20,8 @@ Menu::Menu()
 	m_command[5].SetCheckFunction(&Menu::CheckCMDDeleteDBNode);
 	m_command[6].SetCheckFunction(&Menu::CheckCMDClearDB);
 	m_command[7].SetCheckFunction(&Menu::CheckCMDSelectFromDB);
+	m_command[8].SetCheckFunction(&Menu::CheckCMDReplaceDefaultDB);
+	m_command[9].SetCheckFunction(&Menu::CheckCMDSortDB);
 }
 
 Menu::~Menu()
@@ -451,12 +453,14 @@ void Menu::CheckCMDPrintDBToConsole(string _str)
 	m_db_manager.PrintDBToConsole();
 }
 
+// очистка базы данных
 void Menu::CheckCMDClearDB(string _str)
 {
 	INFO("База данных очищена")
 	m_db_manager.ClearDB();
 }
 
+// выбрать из базы данных определенны элементы
 void Menu::CheckCMDSelectFromDB(string _str)
 {
 	if (!m_db_manager.GetSizeOfDataBase())
@@ -464,6 +468,9 @@ void Menu::CheckCMDSelectFromDB(string _str)
 		FUNC_INFO("база данных пуста");
 		return;
 	}
+
+	// взятие ключа
+	string key = GetToken(_str);
 
 	// Вывод названий полей в базе данных
 	PrintFieldsOfDataBase();
@@ -486,6 +493,7 @@ void Menu::CheckCMDSelectFromDB(string _str)
 	my_list<string> out = *m_db_manager.GetDataInField(number_of_field);
 
 	// печать списка
+	cout << endl;
 	int ind = 1;
 	out.for_each([&ind](node<string>* el)
 		{
@@ -523,4 +531,46 @@ void Menu::CheckCMDSelectFromDB(string _str)
 			cout << _el->get_data()->get_data() << endl;
 		}
 	);
+}
+
+// заменить исходную бд полученной из выборки
+void Menu::CheckCMDReplaceDefaultDB(string _str)
+{
+	if (!m_db_manager.GetSizeOfDataBase())
+	{
+		FUNC_INFO("база данных пуста");
+		return;
+	}
+
+	else
+
+	{
+		// вызов функции определяющей выбранные элемента
+		CheckCMDSelectFromDB("");
+
+		// получение ответа
+		string answ = CheckableRead(
+			"\t[Готовы ли вы оставить только эти элементы? (да/нет)]> ",
+			[](string str)
+			{
+				return ToLowerCase(str) == "да" || ToLowerCase(str) == "нет";
+			}
+		);
+
+		if (answ == "да")
+		{
+			INFO("Замена текущей базы");
+			m_db_manager.ReplaceDefaultDataBase();
+		}
+		else
+		{
+			INFO("Элемнеты не заменены")
+		}
+	}
+
+}
+
+void Menu::CheckCMDSortDB(string _str)
+{
+	//TODO добавить сортировку
 }

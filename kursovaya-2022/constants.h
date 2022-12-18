@@ -36,7 +36,7 @@ const string PATH_TO_LOGO_FOLDER = "assets/logo_slides/";
 const string PATH_TO_LOGO = PATH_TO_LOGO_FOLDER + "logo.txt";
 
 // строка слева от введенной команды
-const string DBMS_CONSOLE_REQUEST_COMMAND = "[СУБД v1.0]> ";
+const string DBMS_CONSOLE_REQUEST_COMMAND = "\n[СУБД v0.1]> ";
 
 // справка о программе
 const string DBMS_DESCRIPTION =
@@ -44,10 +44,10 @@ const string DBMS_DESCRIPTION =
 После появления строки " +
 DBMS_CONSOLE_REQUEST_COMMAND +
 "начинайте вводить команды\n\
-Если неизвестны команды, введите \"помощь\"\n\n";
+Если неизвестны команды, введите \"помощь\"\n";
 
 // количество команд
-const int NUMBER_OF_COMMANDS = 8;
+const int NUMBER_OF_COMMANDS = 10;
 
 // ПРИ ДОБАВЛЕНИИ КОМАНДЫ НАДО ЕЩЕ ДОБАВИТЬ 
 // В COMMAND_CHECK_FUNCTIONS УКАЗАТЕЛИ НА СОТВЕТСТВУЮЩИЕ 
@@ -62,7 +62,9 @@ const string COMMAND_DESCRIPTION_FILES[NUMBER_OF_COMMANDS] =
 	"save.txt",
 	"delete.txt",
 	"clear.txt",
-	"select.txt"
+	"select.txt",
+	"replace.txt",
+	"sort.txt"
 };
 
 

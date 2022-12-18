@@ -220,6 +220,23 @@ void DataBaseManager::SelectDB(int _field_index, string _value)
 	}
 }
 
+void DataBaseManager::ReplaceDefaultDataBase()
+{
+	node<MusicStuff>* elem = m_default_db.get_begin();
+
+	while (elem)
+	{
+		node<MusicStuff>* next = elem->get_next();
+		if (!m_selected_nodes->is_there_element(elem))
+		{
+			m_default_db.delete_node(elem);
+		}
+		elem = next;
+	}
+
+	IndexesRecalculation();	
+}
+
 void DataBaseManager::IndexesRecalculation()
 {
 	node<MusicStuff>* temp = m_default_db.get_begin();

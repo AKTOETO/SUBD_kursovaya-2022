@@ -71,4 +71,11 @@ public:
 
 	// сортировка базы данных
 	void CheckCMDSelectFromDB(string _str);
+
+	// замена исходной базы данных той, 
+	// которая была получена из выборки
+	void CheckCMDReplaceDefaultDB(string _str);
+
+	// сортировка базы данных
+	void CheckCMDSortDB(string _str);
 };

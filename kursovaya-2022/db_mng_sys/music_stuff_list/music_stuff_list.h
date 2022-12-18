@@ -67,6 +67,9 @@ public:
 	// выборка элементов
 	void SelectDB(int _field_index, string _value);
 
+	// замена основной базы данных той, которая в выборке
+	void ReplaceDefaultDataBase();
+
 	// перерасчет индексов
 	void IndexesRecalculation();
 };
