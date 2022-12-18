@@ -8,7 +8,7 @@ class DataBaseManager
 	my_list<MusicStuff> m_default_db;
 
 	// списоск с выбранными элеметами
-	my_list<node<MusicStuff>*>* m_selected_nodes;
+	my_list<node<MusicStuff>*> m_selected_nodes;
 
 public:
 	//  онструктор по умолчанию
@@ -29,7 +29,7 @@ public:
 	int GetSizeOfDataBase() const;
 
 	// получение списка элементов с полем определенного значени€
-	my_list<node<MusicStuff>*>* GetSelectedList() const;
+	my_list<node<MusicStuff>*>& GetSelectedList();
 
 	// сохранение базы данных в файл
 	void SaveDBToFile(ostream& _out_stream);

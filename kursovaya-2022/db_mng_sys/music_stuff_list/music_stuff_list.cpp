@@ -2,12 +2,12 @@
 
 DataBaseManager::DataBaseManager()
 {
-	m_selected_nodes = NULL;
+	//m_selected_nodes = NULL;
 }
 
 DataBaseManager::~DataBaseManager()
 {
-	delete m_selected_nodes;
+	//delete m_selected_nodes;
 }
 
 node<MusicStuff>* DataBaseManager::GetLastNode() const
@@ -36,7 +36,7 @@ int DataBaseManager::GetSizeOfDataBase() const
 	return m_default_db.get_size();
 }
 
-my_list<node<MusicStuff>*>* DataBaseManager::GetSelectedList() const
+my_list<node<MusicStuff>*>& DataBaseManager::GetSelectedList()
 {
 	return m_selected_nodes;
 }
@@ -117,12 +117,12 @@ void DataBaseManager::DeleteDBNode(node<MusicStuff>* _node)
 
 void DataBaseManager::DeleteDBSelectedList()
 {	
-	node<node<MusicStuff>*>* el = m_selected_nodes->get_begin();
+	node<node<MusicStuff>*>* el = m_selected_nodes.get_begin();
 	while (el)
 	{
 		node<node<MusicStuff>*>* next = el->get_next();
 		m_default_db.delete_node(el->get_data());
-		m_selected_nodes->delete_node(el);
+		m_selected_nodes.delete_node(el);
 		el = next;
 	}
 
@@ -201,8 +201,8 @@ void DataBaseManager::SortDB(string _str)
 
 void DataBaseManager::SelectDB(int _field_index, string _value)
 {
-	// выходной список
-	m_selected_nodes = new my_list<node<MusicStuff>*>;
+	// очистка выборочной базы данных
+	m_selected_nodes.clear();
 
 	// элемент для прохождения по списку
 	node<MusicStuff>* temp = m_default_db.get_begin();
@@ -214,7 +214,7 @@ void DataBaseManager::SelectDB(int _field_index, string _value)
 	{
 		if (temp->get_data().GetField(_field_index).GetValue() == _value)
 		{
-			m_selected_nodes->push(temp);
+			m_selected_nodes.push(temp);
 		}
 		temp = temp->get_next();
 	}
@@ -227,14 +227,14 @@ void DataBaseManager::ReplaceDefaultDataBase()
 	while (elem)
 	{
 		node<MusicStuff>* next = elem->get_next();
-		if (!m_selected_nodes->is_there_element(elem))
+		if (!m_selected_nodes.is_there_element(elem))
 		{
 			m_default_db.delete_node(elem);
 		}
 		elem = next;
 	}
 
-	IndexesRecalculation();	
+	IndexesRecalculation();
 }
 
 void DataBaseManager::IndexesRecalculation()

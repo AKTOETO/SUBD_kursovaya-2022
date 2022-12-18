@@ -526,7 +526,7 @@ void Menu::CheckCMDSelectFromDB(string _str)
 	cout << "\n[Выбраны следующие элементы]> \n";
 
 	// печать списка
-	m_db_manager.GetSelectedList()->for_each([](auto _el)
+	m_db_manager.GetSelectedList().for_each([](auto _el)
 		{
 			cout << _el->get_data()->get_data() << endl;
 		}
@@ -545,8 +545,11 @@ void Menu::CheckCMDReplaceDefaultDB(string _str)
 	else
 
 	{
-		// вызов функции определяющей выбранные элемента
-		CheckCMDSelectFromDB("");
+		// вызов функции выборки
+		if (m_db_manager.GetSelectedList().is_empty())
+		{
+			CheckCMDSelectFromDB("");
+		}
 
 		// получение ответа
 		string answ = CheckableRead(
@@ -567,7 +570,6 @@ void Menu::CheckCMDReplaceDefaultDB(string _str)
 			INFO("Элемнеты не заменены")
 		}
 	}
-
 }
 
 void Menu::CheckCMDSortDB(string _str)
