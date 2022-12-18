@@ -31,14 +31,14 @@ int DataBaseManager::GetLastIndexOfNode() const
 	return number;
 }
 
-int DataBaseManager::GetSizeOfDataBase() const
-{
-	return m_default_db.get_size();
-}
-
 my_list<node<MusicStuff>*>& DataBaseManager::GetSelectedList()
 {
 	return m_selected_nodes;
+}
+
+my_list<MusicStuff>& DataBaseManager::GetDefaultList()
+{
+	return m_default_db;
 }
 
 void DataBaseManager::SaveDBToFile(ostream& _out_stream)
@@ -116,7 +116,7 @@ void DataBaseManager::DeleteDBNode(node<MusicStuff>* _node)
 }
 
 void DataBaseManager::DeleteDBSelectedList()
-{	
+{
 	node<node<MusicStuff>*>* el = m_selected_nodes.get_begin();
 	while (el)
 	{
@@ -161,12 +161,37 @@ void DataBaseManager::PrintDBToConsole() const
 	// печатаем список, если он не пуст
 	if (m_default_db.get_size() != 0)
 	{
-		cout << table_cap;
+		cout << TABLE_CAP;
 		cout << m_default_db;
 	}
 	else
 	{
-		INFO("Список пуст");
+		FUNC_INFO("Список пуст");
+	}
+}
+
+void DataBaseManager::PrintSelectedDBToConsole() const
+{
+	// печатаем список, если он не пуст
+	if (m_default_db.get_size() != 0)
+	{
+		cout << TABLE_CAP;
+		// создаем элемент для чтения данных из list'а
+		node<node<MusicStuff>*>* cur_el = m_selected_nodes.get_begin();
+
+		// идем по list'у, пока на наткнемся на конечный элемент
+		while (cur_el != nullptr)
+		{
+			// вывод данных элемента
+			cout << cur_el->get_data()->get_data() << '\n';
+
+			// переход к следующему элементу
+			cur_el = cur_el->get_next();
+		}
+	}
+	else
+	{
+		FUNC_INFO("Список пуст");
 	}
 }
 
@@ -195,11 +220,35 @@ void DataBaseManager::ClearDB()
 	m_default_db.clear();
 }
 
-void DataBaseManager::SortDB(string _str)
+void DataBaseManager::SortDB(int _field_index, bool _comp(string, string))
 {
+	node<MusicStuff>* el = m_default_db.get_begin();
+
+	while (el)
+	{
+		node<MusicStuff>* el2 = m_default_db.get_begin();
+		while (el2)
+		{
+			if (
+				_comp(
+					el->get_data().GetField(_field_index).GetValue(),
+					el2->get_data().GetField(_field_index).GetValue()
+					)
+				)
+			{
+				MusicStuff temp = el->get_data();
+				el->set_data(el2->get_data());
+				el2->set_data(temp);
+			}
+			el2 = el2->get_next();
+		}
+		el = el->get_next();
+	}
+
+	IndexesRecalculation();
 }
 
-void DataBaseManager::SelectDB(int _field_index, string _value)
+void DataBaseManager::SelectDB(int _field_index, string _value, bool _comp(string, string))
 {
 	// очистка выборочной базы данных
 	m_selected_nodes.clear();
@@ -212,7 +261,12 @@ void DataBaseManager::SelectDB(int _field_index, string _value)
 	// в поле с индексом _field_index
 	while (temp)
 	{
-		if (temp->get_data().GetField(_field_index).GetValue() == _value)
+		if (
+			_comp(
+				temp->get_data().GetField(_field_index).GetValue(),
+				_value
+				)
+			)
 		{
 			m_selected_nodes.push(temp);
 		}

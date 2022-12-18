@@ -13,23 +13,8 @@ using namespace std;
 #define INFO(str) cout<<"\t"<<str<<"\n";
 
 // âûâîä ñîîáùåíèÿ îò èìåíè ôóíêöèè
-#define FUNC_INFO(str) cout<<"\t" + string(__FUNCTION__) +": " str + "\n";
+#define FUNC_INFO(str) cout<<"\t" + string(__FUNCTION__) + ": " + str + "\n";
 
-// Êîëè÷åñòâî ïîëåé â áàçå äàííûõ
-const int NUMBER_OF_FIELDS = 8;
-
-// íàçâàíèÿ ïîëåé
-const string NAMES_OF_FIELDS[NUMBER_OF_FIELDS] =
-{
-	"íîñèòåëü",
-	"ïîðÿäêîâûé íîìåð",
-	"íàçâàíèå",
-	"èìÿ èñïîëíèòåëÿ",
-	"ôàìèëèÿ èñïîëíèòåëÿ",
-	"âðåìÿ çâó÷àíèÿ",
-	"êîëè÷åñòâî âîñïðîèçâåäåíèé",
-	"öåíà",
-};
 
 // ëîãîòèï
 const string PATH_TO_LOGO_FOLDER = "assets/logo_slides/";
@@ -45,28 +30,6 @@ const string DBMS_DESCRIPTION =
 DBMS_CONSOLE_REQUEST_COMMAND +
 "íà÷èíàéòå ââîäèòü êîìàíäû\n\
 Åñëè íåèçâåñòíû êîìàíäû, ââåäèòå \"ïîìîùü\"\n";
-
-// êîëè÷åñòâî êîìàíä
-const int NUMBER_OF_COMMANDS = 10;
-
-// ÏÐÈ ÄÎÁÀÂËÅÍÈÈ ÊÎÌÀÍÄÛ ÍÀÄÎ ÅÙÅ ÄÎÁÀÂÈÒÜ 
-// Â COMMAND_CHECK_FUNCTIONS ÓÊÀÇÀÒÅËÈ ÍÀ ÑÎÒÂÅÒÑÒÂÓÞÙÈÅ 
-// ÔÓÍÊÖÈÈ Â ÊÎÍÑÒÐÓÊÒÎÐÅ Menu()
-// ìàññèâ ñ ôàéëàìè, â êîòîðûõ ëåæèò îïèñàíèå êîìàíä
-const string COMMAND_DESCRIPTION_FILES[NUMBER_OF_COMMANDS] =
-{
-	"exit.txt",
-	"help.txt",
-	"read.txt",
-	"print.txt",
-	"save.txt",
-	"delete.txt",
-	"clear.txt",
-	"select.txt",
-	"replace.txt",
-	"sort.txt"
-};
-
 
 // ñîîáùåíèå îá îøèáî÷íîì ââîäå êîìàíäû
 const string NOT_CORRECT_COMMAND = " òàêîé êîìàíäû íå ñóùåñòâóåò\n\
@@ -90,12 +53,88 @@ const string DB_FILE_PATH = DB_FOLDER_PATH + "db.txt";
 #define GET_DATA(str) IsStringNotEmpty(GetToken(str,':'))
 #define GET_INT_DATA(str) atoi(GET_DATA(str).c_str());
 
+// êîëè÷åñòâî êîìàíä
+const int NUMBER_OF_COMMANDS = 10;
+
+// ÏÐÈ ÄÎÁÀÂËÅÍÈÈ ÊÎÌÀÍÄÛ ÍÀÄÎ ÅÙÅ ÄÎÁÀÂÈÒÜ 
+// Â COMMAND_CHECK_FUNCTIONS ÓÊÀÇÀÒÅËÈ ÍÀ ÑÎÒÂÅÒÑÒÂÓÞÙÈÅ 
+// ÔÓÍÊÖÈÈ Â ÊÎÍÑÒÐÓÊÒÎÐÅ Menu()
+// ìàññèâ ñ ôàéëàìè, â êîòîðûõ ëåæèò îïèñàíèå êîìàíä
+const string COMMAND_DESCRIPTION_FILES[NUMBER_OF_COMMANDS] =
+{
+	"exit.txt",
+	"help.txt",
+	"read.txt",
+	"print.txt",
+	"save.txt",
+	"delete.txt",
+	"clear.txt",
+	"select.txt",
+	"replace.txt",
+	"sort.txt"
+};
+
+// Êîëè÷åñòâî ïîëåé â áàçå äàííûõ
+const int NUMBER_OF_FIELDS = 8;
+
+// íàçâàíèÿ ïîëåé
+const string NAMES_OF_FIELDS[NUMBER_OF_FIELDS] =
+{
+	"ÍÎÑÈÒÅËÜ",
+	"ÏÎÐßÄÊÎÂÛÉ ÍÎÌÅÐ",
+	"ÍÀÇÂÀÍÈÅ ÏÅÑÍÈ",
+	"ÈÌß ÈÑÏÎËÍÈÒÅËß",
+	"ÔÀÌÈËÈß ÈÑÏÎËÍÈÒÅËß",
+	"ÂÐÅÌß ÇÂÓ×ÀÍÈß",
+	"ÊÎËÈ×ÅÑÒÂÎ ÂÎÑÏÐÎÈÇÂÅÄÅÍÈÉ",
+	"ÖÅÍÀ",
+};
+
+
 // øàïêà òàáëèöû
-const string table_cap = "| ÍÎÌÅÐ | ÍÎÑÈÒÅËÜ | ÍÀÇÂÀÍÈÅ |\
- ÈÌß ÈÑÏÎËÍÈÒÅËß | ÔÀÌÈËÈß ÈÑÏÎËÍÈÒÅËß | ÂÐÅÌß | ÊÎË-ÂÎ ÂÎÑÏÐ. | ÖÅÍÀ |\n";
+const string TABLE_CAP =
+"|   " + NAMES_OF_FIELDS[1] +
+"   |   " + NAMES_OF_FIELDS[0] +
+"   |    " + NAMES_OF_FIELDS[2] +
+"   |     " + NAMES_OF_FIELDS[3] +
+"     |   " + NAMES_OF_FIELDS[4] +
+"   |   " + NAMES_OF_FIELDS[5] +
+"   |   " + NAMES_OF_FIELDS[6] +
+"   |   " + NAMES_OF_FIELDS[7] +
+"   |\n";
 
 // øèðèíà ïîëåé òàáëèöû ïðè âûâîäå
-const int width_of_fields[9] =
+const int FIELDS_WIDTH[9] =
 {
-	7,10,10,17,21,7,15,6
+	NAMES_OF_FIELDS[1].length() + 6,
+	NAMES_OF_FIELDS[0].length() + 6,
+	NAMES_OF_FIELDS[2].length() + 7,
+	NAMES_OF_FIELDS[3].length() + 10,
+	NAMES_OF_FIELDS[4].length() + 6,
+	NAMES_OF_FIELDS[5].length() + 6,
+	NAMES_OF_FIELDS[6].length() + 6,
+	NAMES_OF_FIELDS[7].length() + 6,
+};
+
+// êîëè÷åñòâî ôóíêöèé ñîðòèðîâêè
+const int NUMBER_OF_SORTS = 2;
+
+// íàçâàíèÿ ñîðòèðîâîê
+const string NAMES_OF_SORTS[2] =
+{
+	"ïî óáûâàíèþ",
+	"ïî âîçðàñòàíèþ"
+};
+
+// êîëè÷åñòâî ôóíêöèé ñðàâíåíèÿ
+const int NUMBER_OF_COMPARISONS = 5;
+
+// íàçâàíèÿ ôóíêöèé ñðàâíåíèÿ
+const string NAMES_OF_COMPARISONS[NUMBER_OF_COMPARISONS] =
+{
+	">",
+	"<",
+	"==",
+	"<=",
+	">=",
 };

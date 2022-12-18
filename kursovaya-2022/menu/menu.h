@@ -30,6 +30,14 @@ class Menu
 #define CMD_SH_DECR(num) m_command[num].GetAttribute(1)
 #define CMD_FL_DESCR(num) m_command[num].GetAttribute(2)
 #define CMD_CHK_FUNC(in_name, in_arg) (this->*m_command[GetNumberOfCommand(in_name)].GetCheckFunction())(in_arg)
+	// Выход из функции, если пуст лист
+#define RETURN_IF_LIST_IS_EMPTY \
+	if (m_db_manager.GetDefaultList().is_empty())\
+	{\
+		FUNC_INFO("база данных пуста");\
+		return;\
+	}
+
 public:
 	// конструктор и деструктор
 	Menu();

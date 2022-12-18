@@ -25,11 +25,11 @@ public:
 	// получение индекса последнего элемента из списка
 	int GetLastIndexOfNode() const;
 
-	// получение размера списка
-	int GetSizeOfDataBase() const;
-
 	// получение списка элементов с полем определенного значения
 	my_list<node<MusicStuff>*>& GetSelectedList();
+
+	// получение основного списка элементов
+	my_list<MusicStuff>& GetDefaultList();
 
 	// сохранение базы данных в файл
 	void SaveDBToFile(ostream& _out_stream);
@@ -55,6 +55,9 @@ public:
 	// печать в поток
 	void PrintDBToConsole() const;
 
+	// печать выборочной БД в поток
+	void PrintSelectedDBToConsole() const;
+
 	// печать значений поля по индексу
 	my_list<string>* GetDataInField(int _index) const;
 
@@ -62,10 +65,11 @@ public:
 	void ClearDB();
 
 	// сортировать базу данных
-	void SortDB(string _str);
+	void SortDB(int _field_index, bool(string, string) = COMPARE::IsLower);
 
 	// выборка элементов
-	void SelectDB(int _field_index, string _value);
+	void SelectDB(int _field_index, string _value
+		, bool(string, string) = COMPARE::IsEqual);
 
 	// замена основной базы данных той, которая в выборке
 	void ReplaceDefaultDataBase();

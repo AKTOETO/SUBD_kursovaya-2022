@@ -285,11 +285,8 @@ void Menu::CheckCMDReadDB(string _str)
 // сохранение базы данных в файл
 void Menu::CheckCMDSaveDBToFile(string _str)
 {
-	if (!m_db_manager.GetSizeOfDataBase())
-	{
-		FUNC_INFO("база данных пуста");
-		return;
-	}
+	RETURN_IF_LIST_IS_EMPTY
+
 	// место считывания информации
 	string temp = GetToken(_str);
 
@@ -337,11 +334,7 @@ void Menu::CheckCMDSaveDBToFile(string _str)
 // удаление элеемнта из базы данных
 void Menu::CheckCMDDeleteDBNode(string _str)
 {
-	if (!m_db_manager.GetSizeOfDataBase())
-	{
-		FUNC_INFO("база данных пуста");
-		return;
-	}
+	RETURN_IF_LIST_IS_EMPTY
 
 	// как удалять: с помощью индекса
 	// или с помощью поля
@@ -425,7 +418,7 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 			}
 		);
 
-		if(answ == "да")
+		if (answ == "да")
 		{
 			// удаление выбранных элементов из списка
 			m_db_manager.DeleteDBSelectedList();
@@ -445,11 +438,8 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 // проверка команды	ПЕЧАТЬДАННЫХ
 void Menu::CheckCMDPrintDBToConsole(string _str)
 {
-	if (!m_db_manager.GetSizeOfDataBase())
-	{
-		FUNC_INFO("база данных пуста");
-		return;
-	}
+	RETURN_IF_LIST_IS_EMPTY
+
 	m_db_manager.PrintDBToConsole();
 }
 
@@ -457,20 +447,19 @@ void Menu::CheckCMDPrintDBToConsole(string _str)
 void Menu::CheckCMDClearDB(string _str)
 {
 	INFO("База данных очищена")
-	m_db_manager.ClearDB();
+		m_db_manager.ClearDB();
 }
 
 // выбрать из базы данных определенны элементы
 void Menu::CheckCMDSelectFromDB(string _str)
 {
-	if (!m_db_manager.GetSizeOfDataBase())
-	{
-		FUNC_INFO("база данных пуста");
-		return;
-	}
+	RETURN_IF_LIST_IS_EMPTY
 
 	// взятие ключа
 	string key = GetToken(_str);
+
+	// диалоговое сообщение
+	cout << "\n\tВозможные поля для выборки:\n";
 
 	// Вывод названий полей в базе данных
 	PrintFieldsOfDataBase();
@@ -493,7 +482,7 @@ void Menu::CheckCMDSelectFromDB(string _str)
 	my_list<string> out = *m_db_manager.GetDataInField(number_of_field);
 
 	// печать списка
-	cout << endl;
+	cout << "\n\tУникальные значения этого поля:\n";
 	int ind = 1;
 	out.for_each([&ind](node<string>* el)
 		{
@@ -505,7 +494,7 @@ void Menu::CheckCMDSelectFromDB(string _str)
 	int number_of_value =
 		atoi(
 			CheckableRead(
-				"\t[Какое значение искать в поле]> ",
+				"\t[Какое значение использовать в поле]> ",
 				[&out](string num)
 				{
 					return
@@ -515,64 +504,140 @@ void Menu::CheckCMDSelectFromDB(string _str)
 				}
 	).c_str()) - 1;
 
+	// значение поля под индексом number_of_value 
+	// с которым будем сравнивать
+	string field_value = out.get_element_by_index(number_of_value)->get_data();
+
+	cout << "\n\tЕсли неравенство верно, происходит выбор. Типы сравнений:\n";
+	// вывод типов сравнений
+	for (int i = 0; i < NUMBER_OF_COMPARISONS; i++)
+	{
+		cout << "\t" << i + 1 << ") " << "элементы " <<
+			NAMES_OF_COMPARISONS[i]	<< ' ' << field_value << "\n";
+	}
+
+	// выбор типа сравнения элементов
+	int comp_type =
+		atoi(
+			CheckableRead(
+				"\t[Какой тип сравнения использовать]> ",
+				[](string num)
+				{
+					return
+					IsThereANumber(num) &&
+					1 <= atoi(num.c_str()) &&
+					atoi(num.c_str()) <= NUMBER_OF_COMPARISONS;
+				}
+	).c_str()) - 1;
+
 	// выборка элементов списка с определенным
 	// значением определенного поля
 	m_db_manager.SelectDB
 	(
 		number_of_field,
-		out.get_element_by_index(number_of_value)->get_data()
+		field_value,
+		COMPARE::COMPARISONS[comp_type]
 	);
 
 	cout << "\n[Выбраны следующие элементы]> \n";
 
-	// печать списка
-	m_db_manager.GetSelectedList().for_each([](auto _el)
-		{
-			cout << _el->get_data()->get_data() << endl;
-		}
-	);
+	// Вывод шапки таблицы
+	cout << TABLE_CAP;
+
+	// печать базы данных
+	if(!m_db_manager.GetSelectedList().is_empty())
+	{
+		m_db_manager.GetSelectedList().for_each([](auto _el)
+			{
+				cout << _el->get_data()->get_data() << endl;
+			}
+		);
+	}
+	else
+	{
+		INFO("\t Такие элементы не найдены");
+	}
 }
 
 // заменить исходную бд полученной из выборки
 void Menu::CheckCMDReplaceDefaultDB(string _str)
 {
-	if (!m_db_manager.GetSizeOfDataBase())
-	{
-		FUNC_INFO("база данных пуста");
-		return;
-	}
+	RETURN_IF_LIST_IS_EMPTY
 
+	// вызов функции выборки
+	if (m_db_manager.GetSelectedList().is_empty())
+	{
+		CheckCMDSelectFromDB("");
+	}
+	// иначе печать базы данных
 	else
-
 	{
-		// вызов функции выборки
-		if (m_db_manager.GetSelectedList().is_empty())
-		{
-			CheckCMDSelectFromDB("");
-		}
-
-		// получение ответа
-		string answ = CheckableRead(
-			"\t[Готовы ли вы оставить только эти элементы? (да/нет)]> ",
-			[](string str)
-			{
-				return ToLowerCase(str) == "да" || ToLowerCase(str) == "нет";
-			}
-		);
-
-		if (answ == "да")
-		{
-			INFO("Замена текущей базы");
-			m_db_manager.ReplaceDefaultDataBase();
-		}
-		else
-		{
-			INFO("Элемнеты не заменены")
-		}
+		m_db_manager.PrintSelectedDBToConsole();
 	}
+
+	// получение ответа
+	string answ = CheckableRead(
+		"\t[Готовы ли вы оставить только эти элементы? (да/нет)]> ",
+		[](string str)
+		{
+			return ToLowerCase(str) == "да" || ToLowerCase(str) == "нет";
+		}
+	);
+
+	if (answ == "да")
+	{
+		INFO("Замена текущей базы");
+		m_db_manager.ReplaceDefaultDataBase();
+	}
+	else
+	{
+		INFO("Элемнеты не заменены")
+	}
+
 }
 
 void Menu::CheckCMDSortDB(string _str)
 {
-	//TODO добавить сортировку
+	RETURN_IF_LIST_IS_EMPTY
+
+	// Вывод названий полей в базе данных
+	PrintFieldsOfDataBase();
+
+	// индекс поля
+	int number_of_field =
+		atoi(
+			CheckableRead(
+				"\t[По какому полю осуществлять сортировку]> ",
+				[](string num)
+				{
+					return
+					IsThereANumber(num) &&
+				1 <= atoi(num.c_str()) &&
+				atoi(num.c_str()) <= NUMBER_OF_FIELDS;
+				}
+	).c_str()) - 1;
+
+	// вывод типов сортировок
+	for (int i = 0; i < NUMBER_OF_SORTS; i++)
+	{
+		cout << "\t" << i + 1 << ") " << NAMES_OF_SORTS[i] << endl;
+	}
+
+	// взятие типа сортировки
+	int sort_type =
+		atoi(
+			CheckableRead(
+				"\t[По как сортировать]> ",
+				[](string num)
+				{
+					return
+					IsThereANumber(num) &&
+				1 <= atoi(num.c_str()) &&
+				atoi(num.c_str()) <= NUMBER_OF_SORTS;
+				}
+	).c_str()) - 1;
+
+
+	// сортировка
+	m_db_manager.SortDB(number_of_field, COMPARE::COMPARISONS[sort_type]);
 }

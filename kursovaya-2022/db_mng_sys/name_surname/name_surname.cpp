@@ -59,8 +59,8 @@ string NameSurname::GetSurname() const
 ostream& operator<<(ostream& _out_stream, const NameSurname& _name)
 {
 	_out_stream <<
-		OUT_W(' ', width_of_fields[3]) << _name.m_name <<
-		OUT_W(' ', width_of_fields[4]) << _name.m_surname;
+		OUT_W(' ', FIELDS_WIDTH[3]) << _name.m_name <<
+		OUT_W(' ', FIELDS_WIDTH[4]) << _name.m_surname;
 	return _out_stream;
 }
 

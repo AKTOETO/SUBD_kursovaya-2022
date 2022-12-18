@@ -65,14 +65,14 @@ MusicStuff::~MusicStuff()
 ostream& operator<<(ostream& _out_stream, const MusicStuff& _music_stuff)
 {
 	_out_stream
-		<< "|" << OUT_W(' ', width_of_fields[0]) << *_music_stuff.SERIAL_NUMBER
-		<< "|" << OUT_W(' ', width_of_fields[1]) << *_music_stuff.STORAGE
-		<< "|" << OUT_W(' ', width_of_fields[2]) << *_music_stuff.NAME
-		<< "|" << OUT_W(' ', width_of_fields[3]) << *_music_stuff.ARTIST_NAME
-		<< "|" << OUT_W(' ', width_of_fields[4]) << *_music_stuff.ARTIST_SURNAME
-		<< "|" << OUT_W(' ', width_of_fields[5]) << *_music_stuff.SOUND_TIME
-		<< "|" << OUT_W(' ', width_of_fields[6]) << *_music_stuff.NUMBER_OF_PLAYS
-		<< "|" << OUT_W(' ', width_of_fields[7]) << *_music_stuff.PRICE
+		<< "|" << OUT_W(' ', FIELDS_WIDTH[0]) << *_music_stuff.SERIAL_NUMBER
+		<< "|" << OUT_W(' ', FIELDS_WIDTH[1]) << *_music_stuff.STORAGE
+		<< "|" << OUT_W(' ', FIELDS_WIDTH[2]) << *_music_stuff.NAME
+		<< "|" << OUT_W(' ', FIELDS_WIDTH[3]) << *_music_stuff.ARTIST_NAME
+		<< "|" << OUT_W(' ', FIELDS_WIDTH[4]) << *_music_stuff.ARTIST_SURNAME
+		<< "|" << OUT_W(' ', FIELDS_WIDTH[5]) << *_music_stuff.SOUND_TIME
+		<< "|" << OUT_W(' ', FIELDS_WIDTH[6]) << *_music_stuff.NUMBER_OF_PLAYS
+		<< "|" << OUT_W(' ', FIELDS_WIDTH[7]) << *_music_stuff.PRICE
 		<< "|";
 
 	return _out_stream;

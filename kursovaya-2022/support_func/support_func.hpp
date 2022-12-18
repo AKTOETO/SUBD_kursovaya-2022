@@ -1,8 +1,4 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <sstream>
 #include "../constants.h"
 
 using namespace std;
@@ -14,6 +10,20 @@ inline bool DefaultTrueFunc(string)
 }
 
 // Проверка на число
+inline bool IsItANumber(string _str)
+{
+	// итератор на начало строки
+	std::string::const_iterator it = _str.begin();
+
+	// идем до символа, который окажется не цифрой
+	while (it != _str.end() && std::isdigit(*it)) it++;
+
+	// если строка не пустая и мы дошли до конца
+	// значит это число
+	return (_str.end() == it);
+}
+
+// Проверка на наличие числа в строке
 inline bool IsThereANumber(string _str)
 {
 	// итератор на начало строки
@@ -57,7 +67,7 @@ inline string CheckableRead(
 	// если было введено не то, что нужно было
 	if (!_comp(str))
 	{
-		cout << _err_str << "\n";
+		FUNC_INFO(_err_str);
 		// рекурсивный запрос значения
 		str = CheckableRead<FUNC>(_welcome_str, _comp, _err_str);
 	}
@@ -99,7 +109,7 @@ inline void PrintFieldsOfDataBase()
 {
 	for (int i = 0; i < NUMBER_OF_FIELDS; i++)
 	{
-		cout << "\t" << i+1 << ") " << NAMES_OF_FIELDS[i] << "\n";
+		cout << "\t" << i + 1 << ") " << NAMES_OF_FIELDS[i] << "\n";
 	}
 }
 
@@ -189,4 +199,54 @@ inline string ToUpperCase(const string _str)
 		}
 	}
 	return out;
+}
+
+//**********************************//
+//		ФУНКЦИИ СРАВНЕНИЯ СТРОК		//
+//**********************************//
+namespace COMPARE
+{
+	inline bool IsLower(string s1, string s2)
+	{
+		if (IsItANumber(s1) && IsItANumber(s2))
+			return atoi(s1.c_str()) < atoi(s2.c_str());
+
+		return s1 < s2 && s1.length() <= s2.length();
+	}
+
+	inline bool IsGreater(string s1, string s2)
+	{
+		if (IsItANumber(s1) && IsItANumber(s2))
+			return atoi(s1.c_str()) > atoi(s2.c_str());
+
+		return s1 > s2 && s1.length() >= s2.length();
+	}
+
+	inline bool IsEqual(string s1, string s2)
+	{
+		if (IsItANumber(s1) && IsItANumber(s2))
+			return atoi(s1.c_str()) == atoi(s2.c_str());
+
+		return s1 == s2;
+	}
+
+	inline bool IsLowerEqual(string s1, string s2)
+	{
+		return IsLower(s1, s2) || IsEqual(s1, s2);
+	}
+
+	inline bool IsGreaterEqual(string s1, string s2)
+	{
+		return IsGreater(s1, s2) || IsEqual(s1, s2);
+	}
+
+	// Массив функций сравнения
+	static bool (*COMPARISONS[])(string, string) =
+	{
+		IsGreater,
+		IsLower,
+		IsEqual,
+		IsLowerEqual,
+		IsGreaterEqual
+	};
 }
