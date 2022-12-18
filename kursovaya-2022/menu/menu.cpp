@@ -197,34 +197,34 @@ void Menu::CheckCMDReadDB(string _str)
 
 		// номер типа считывания
 		int read_type = ReadIndexInNumberedArray(
-			"По какому полю осуществлять выбор",
+			"Откуда считывать информацию",
 			1, INFO_ENTER_SIZE
 		);
 
 		// если считывание с консоли
 		if (read_type == 0)
 		{
-			ReadFromConsole(temp);
+			ReadDBFromConsole("");
 		}
 		// если считывание из файла
 		else if (read_type == 1)
 		{
-			ReadFromFile(temp);
+			ReadDBFromFile("");
 		}
 	}
 	// из стандартного файла
 	else if (temp == "-ф")
 	{
-		// проверка на наличие файлового пути
+		// получение файлового пути
 		temp = GetToken(_str);
 
 		// Считывание из файла
-		ReadFromFile(temp);
+		ReadDBFromFile(temp);
 	}
 	// если введенная информация - не ключ
 	else
 	{
-		INFO("CHECKCMDREADDB: неизвестный ключ: \"" + temp + "\"");
+		FUNC_INFO("неизвестный ключ: \"" + temp + "\"");
 	}
 }
 
@@ -233,48 +233,45 @@ void Menu::CheckCMDSaveDBToFile(string _str)
 {
 	RETURN_IF_LIST_IS_EMPTY;
 
-	// место считывания информации
+	// считывание ключа
 	string temp = GetToken(_str);
 
-	// создаем файловый поток и
-	// выводим информацию туда
-	ofstream fout;
-
 	// если ключей нет
+	// запуск диалога
 	if (!temp.length())
 	{
-		// использую стандартный файл вывода
-		INFO("Использование стандартного файла вывода " + DB_FILE_PATH);
-		temp = DB_FILE_PATH;
+		INFO("\n\tВыберете место вывода информации:");
 
-		// открытие файла
-		fout.open(temp);
+		// печать типов 
+		PrintNumberedArray(FILE_PATH, FILE_PATH_SIZE);
 
-		// сохранение базы данных в файл
-		m_db_manager.SaveDBToFile(fout);
+		// ввод номера варианта
+		int read_type = ReadIndexInNumberedArray(
+			"Как считывать файл",
+			1, FILE_PATH_SIZE
+		);
+
+		// использование файла по умолчанию
+		if (read_type == 0)
+		{
+			WriteDBToFile("");
+		}
+		// если надо ввести путь из консоли
+		else if (read_type == 1)
+		{
+			INFO("\n\tФайл должен быть в папке " + DB_FOLDER_PATH);
+			WriteDBToFile(CheckableRead("\t[Введите имя файла]> "));
+		}
 	}
-	// иначе пытаюсь вывести в temp файл
+	// если введен ключ -ф
 	else if (temp == "-ф")
 	{
-		INFO("Печать в файл");
-
-		// получение файлового пути
-		temp = DB_FOLDER_PATH + GetToken(_str);
-
-		INFO("Использование файла " + temp);
-
-		// открытие файла
-		fout.open(temp);
-
-		// сохранение базы данных в файл
-		m_db_manager.SaveDBToFile(fout);
+		WriteDBToFile(GetToken(_str));
 	}
 	else
 	{
-		INFO("CHECKCMDSAVEDBTOFILE: неизвестный ключ: \"" + temp + "\"");
+		FUNC_INFO("неизвестный ключ: \"" + temp + "\"");
 	}
-	// закрытие файлового потока
-	fout.close();
 }
 
 // удаление элеемнта из базы данных
@@ -588,7 +585,7 @@ void Menu::CheckCMDSortDB(string _str)
 	m_db_manager.SortDB(number_of_field, COMPARE::COMPARISONS[sort_type]);
 }
 
-void Menu::ReadFromConsole(string _str)
+void Menu::ReadDBFromConsole(string _str)
 {
 	INFO("\n\tВвод с консоли:");
 	MusicStuff ms;
@@ -660,7 +657,7 @@ void Menu::ReadFromConsole(string _str)
 	m_db_manager.ReadDBNodeFromNode(ms);
 }
 
-void Menu::ReadFromFile(string _str)
+void Menu::ReadDBFromFile(string _str)
 {
 	INFO("\n\tЧтение из файла");
 
@@ -672,26 +669,26 @@ void Menu::ReadFromFile(string _str)
 	if (!temp.length())
 	{
 		// печать типов 
-		PrintNumberedArray(FILE_READ, FILE_READ_SIZE);
+		PrintNumberedArray(FILE_PATH, FILE_PATH_SIZE);
 
 		// ввод номера варианта
 		int read_type = ReadIndexInNumberedArray(
 			"Как считывать файл",
-			1, FILE_READ_SIZE
+			1, FILE_PATH_SIZE
 		);
 
 		// использование файла по умолчанию
 		if (read_type == 0)
 		{
 			INFO("\n\tИспользование стандартного файла " + DB_FILE_PATH);
-			OpenReadFileAndReadDataToDB(DB_FILE_PATH);
+			OpenFileAndReadDataToDB(DB_FILE_PATH);
 		}
 		// если надо ввести путь из консоли
 		else if (read_type == 1)
 		{
 			INFO("\n\tФайл должен быть в папке " + DB_FOLDER_PATH);
-			OpenReadFileAndReadDataToDB(
-				DB_FOLDER_PATH + CheckableRead("\tВведите имя файла:")
+			OpenFileAndReadDataToDB(
+				DB_FOLDER_PATH + CheckableRead("\t[Введите имя файла]> ")
 			);
 		}
 	}
@@ -701,11 +698,11 @@ void Menu::ReadFromFile(string _str)
 		temp = GetToken(temp);
 		temp = DB_FOLDER_PATH + temp;
 		INFO("Использование файла " + temp);
-		OpenReadFileAndReadDataToDB(temp);
+		OpenFileAndReadDataToDB(temp);
 	}
 }
 
-void Menu::OpenReadFileAndReadDataToDB(string _str)
+void Menu::OpenFileAndReadDataToDB(string _str)
 {
 	// создаем файловый поток и
 	// читаем информацию оттуда
@@ -726,4 +723,52 @@ void Menu::OpenReadFileAndReadDataToDB(string _str)
 
 	// закрытие файла
 	fin.close();
+}
+
+void Menu::WriteDBToFile(string _str)
+{
+	INFO("\n\tПечать в файл");
+
+	// получение файлового пути
+	string temp = GetToken(_str);
+
+	// если путь до файла не указан
+	// запуск диалога
+	if (!temp.length())
+	{
+		
+		INFO("Использование стандартного файла " + OUT_DB_FILE_PATH);
+		OpenFileAndWriteDBToFile(OUT_DB_FILE_PATH);
+		
+	}
+	// если указан путь до файла
+	else
+	{
+		temp = GetToken(temp);
+		temp = DB_FOLDER_PATH + temp;
+		INFO("Использование файла " + temp);
+		OpenFileAndWriteDBToFile(temp);
+	}
+}
+
+void Menu::OpenFileAndWriteDBToFile(string _str)
+{
+	// создаем файловый поток
+	ofstream fout(_str);
+
+	// если не удалось открыть файл
+	if (!fout.is_open())
+	{
+		// вывод сообщение об ошибке
+		INFO("Файл \"" + _str + "\" не был открыт");
+	}
+	// иначе записываем информацию из файлв в консоль
+	else
+	{
+		m_db_manager.SaveDBToFile(fout);
+		INFO("Запись выполнена");
+	}
+
+	// закрытие файла
+	fout.close();
 }

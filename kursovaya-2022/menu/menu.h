@@ -99,12 +99,18 @@ public:
 	//****************************************//
 
 	// чтение из консоли
-	void ReadFromConsole(string _str);
+	void ReadDBFromConsole(string _str);
 
 	// чтение из файла
-	void ReadFromFile(string _str);
+	void ReadDBFromFile(string _str);
 
 	// открытие файла по пути _str 
 	// и запись данных в базу данных
-	void OpenReadFileAndReadDataToDB(string _str);
+	void OpenFileAndReadDataToDB(string _str);
+
+	// запись БД в файл
+	void WriteDBToFile(string _str);
+
+	// запись БД в файл
+	void OpenFileAndWriteDBToFile(string _str);
 };

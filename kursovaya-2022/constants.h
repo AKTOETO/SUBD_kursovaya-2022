@@ -46,6 +46,9 @@ const string DB_FOLDER_PATH = "assets/databases/";
 // путь до файла с базой данных
 const string DB_FILE_PATH = DB_FOLDER_PATH + "db.txt";
 
+// путь жо файла с выводом БД
+const string OUT_DB_FILE_PATH = DB_FOLDER_PATH + "db_out.txt";
+
 // заполнение len элементов элементом symb
 #define OUT_W(symb, len) fixed << setfill(symb) << setw(len)
 
@@ -149,11 +152,12 @@ const string INFO_ENTER[INFO_ENTER_SIZE] =
 	"файл"
 };
 
-// размера массива для мест считывания файла
-const int FILE_READ_SIZE = 2;
+// размера массива с инфой для файлового ввода/вывода
+const int FILE_PATH_SIZE = 2;
 
-// способ ввода информации
-const string FILE_READ[FILE_READ_SIZE] =
+// для функции ввода информации из файла
+// и печати в файл
+const string FILE_PATH[FILE_PATH_SIZE] =
 {
 	"использование файла по умолчанию",
 	"ввести свой путь до файла"
