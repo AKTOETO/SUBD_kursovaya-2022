@@ -119,6 +119,28 @@ int Menu::GetNumberOfCommand(const string& _command)
 	return -1;
 }
 
+void Menu::PrintNumberedArray(const string _arr[], int _size)
+{
+	for (int i = 0; i < _size; i++)
+	{
+		cout << "\t" << i + 1 << ") " << _arr[i] << "\n";
+	}
+}
+
+int Menu::ReadIndexInNumberedArray(const string _str, int _min, int _max)
+{
+	return atoi(
+		CheckableRead(
+			"\t[" + _str + "]> ",
+			[_min, _max](string num)
+			{
+				return	IsThereANumber(num) &&
+				_min <= atoi(num.c_str()) &&
+			atoi(num.c_str()) <= _max;
+			}
+	).c_str()) - 1;
+}
+
 // проверка команды выход
 void Menu::CheckCMDExit(string _str)
 {
@@ -145,7 +167,7 @@ void Menu::CheckCMDHelp(string _str)
 	{
 		// если этот аргумент - команда
 		// выводим подробную инфу по ней
-		if (IsCommandCorrect(_str))
+		if (IsCommandCorrect(GetToken(_str)))
 		{
 			cout << CMD_FL_DESCR(GetNumberOfCommand(_str)) << endl;
 		}
@@ -165,117 +187,41 @@ void Menu::CheckCMDReadDB(string _str)
 
 	// проверка места считывания информации
 	// из файла
-	if (temp == "-ф" || !temp.length())
+	if (!temp.length())
 	{
-		INFO("Чтение из файла");
+		// запуск режима диалога
+		cout << "\n\tВыберете способ ввода информации:\n";
 
+		// Вывод названий полей в базе данных
+		PrintNumberedArray(INFO_ENTER, INFO_ENTER_SIZE);
+
+		// номер типа считывания
+		int read_type = ReadIndexInNumberedArray(
+			"По какому полю осуществлять выбор",
+			1, INFO_ENTER_SIZE
+		);
+
+		// если считывание с консоли
+		if (read_type == 0)
+		{
+			ReadFromConsole(temp);
+		}
+		// если считывание из файла
+		else if (read_type == 1)
+		{
+			ReadFromFile(temp);
+		}
+	}
+	// из стандартного файла
+	else if (temp == "-ф")
+	{
 		// проверка на наличие файлового пути
 		temp = GetToken(_str);
 
-		// если путь до файла не указан
-		// используем стандартный путь
-		if (temp.length() == 0)
-		{
-			INFO("Использование стандартного файла " + DB_FILE_PATH);
-			temp = DB_FILE_PATH;
-		}
-		else
-		{
-			temp = DB_FOLDER_PATH + temp;
-			INFO("Использование файла " + temp);
-		}
-
-		// создаем файловый поток и
-		// читаем информацию оттуда
-		ifstream fin(temp);
-
-		// если не удалось открыть файл
-		if (!fin.is_open())
-		{
-			// вывод сообщение об ошибке
-			INFO("Файл \"" + temp + "\" не был открыт");
-		}
-		// иначе записываем информацию из файлв в консоль
-		else
-		{
-			m_db_manager.ReadDBFromFile(fin);
-		}
-
-		// закрытие файла
-		fin.close();
+		// Считывание из файла
+		ReadFromFile(temp);
 	}
-	// из консоли
-	else if (temp == "-к")
-	{
-		INFO("Ввод с консоли:");
-		MusicStuff ms;
-
-		// считывание места хранения
-		ms.SetStorage(
-			CheckableRead(
-				"\t[Введите НОСИТЕЛЬ]> "
-			)
-		);
-
-		// запись порядкового номера
-		ms.SetSerialNumber(
-			m_db_manager.GetLastIndexOfNode() + 1
-		);
-
-		// считывание названия трека
-		ms.SetName(
-			CheckableRead(
-				"\t[Введите НАЗВАНИЕ ТРЕКА]> "
-			)
-		);
-
-		// считывание имени исполнителя
-		ms.SetArtistsName(
-			CheckableRead(
-				"\t[Введите ИМЯ исполнителя]> "
-			)
-		);
-
-		// считывание фамилии исполнителя
-		ms.SetArtistsSurname(
-			CheckableRead(
-				"\t[Введите ФАМИЛИЮ исполнителя]> "
-			)
-		);
-
-		// считывание времени проигрывания трека
-		ms.SetSoundTime(
-			atoi(
-				CheckableRead(
-					"\t[Введите ВРЕМЯ ЗВУЧАНИЯ (минуты)]> ",
-					IsThereANotNegativeNumber
-				).c_str()
-			)
-		);
-
-		// считывание количества воспроизведений
-		ms.SetNumberOfPlays(
-			atoi(
-				CheckableRead(
-					"\t[Введите КОЛИЧЕСТВО ВОСПРОИЗВЕДЕНИЙ]> ",
-					IsThereANotNegativeNumber
-				).c_str()
-			)
-		);
-
-		// считывание цены
-		ms.SetPrice(
-			atoi(
-				CheckableRead(
-					"\t[Введите ЦЕНУ (рубли)]> ",
-					IsThereANotNegativeNumber
-				).c_str()
-			)
-		);
-
-		// запись считанного элемента в список
-		m_db_manager.ReadDBNodeFromNode(ms);
-	}
+	// если введенная информация - не ключ
 	else
 	{
 		INFO("CHECKCMDREADDB: неизвестный ключ: \"" + temp + "\"");
@@ -285,7 +231,7 @@ void Menu::CheckCMDReadDB(string _str)
 // сохранение базы данных в файл
 void Menu::CheckCMDSaveDBToFile(string _str)
 {
-	RETURN_IF_LIST_IS_EMPTY
+	RETURN_IF_LIST_IS_EMPTY;
 
 	// место считывания информации
 	string temp = GetToken(_str);
@@ -336,9 +282,9 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 {
 	RETURN_IF_LIST_IS_EMPTY
 
-	// как удалять: с помощью индекса
-	// или с помощью поля
-	string temp = GetToken(_str);
+		// как удалять: с помощью индекса
+		// или с помощью поля
+		string temp = GetToken(_str);
 
 	// если было введено удаление по индексу
 	if (temp == "-и")
@@ -440,7 +386,7 @@ void Menu::CheckCMDPrintDBToConsole(string _str)
 {
 	RETURN_IF_LIST_IS_EMPTY
 
-	m_db_manager.PrintDBToConsole();
+		m_db_manager.PrintDBToConsole();
 }
 
 // очистка базы данных
@@ -455,8 +401,8 @@ void Menu::CheckCMDSelectFromDB(string _str)
 {
 	RETURN_IF_LIST_IS_EMPTY
 
-	// взятие ключа
-	string key = GetToken(_str);
+		// взятие ключа
+		string key = GetToken(_str);
 
 	// диалоговое сообщение
 	cout << "\n\tВозможные поля для выборки:\n";
@@ -473,8 +419,8 @@ void Menu::CheckCMDSelectFromDB(string _str)
 				{
 					return
 					IsThereANumber(num) &&
-					1 <= atoi(num.c_str()) &&
-					atoi(num.c_str()) <= NUMBER_OF_FIELDS;
+				1 <= atoi(num.c_str()) &&
+				atoi(num.c_str()) <= NUMBER_OF_FIELDS;
 				}
 	).c_str()) - 1;
 
@@ -499,8 +445,8 @@ void Menu::CheckCMDSelectFromDB(string _str)
 				{
 					return
 					IsThereANumber(num) &&
-					1 <= atoi(num.c_str()) &&
-					atoi(num.c_str()) <= out.get_size();
+				1 <= atoi(num.c_str()) &&
+				atoi(num.c_str()) <= out.get_size();
 				}
 	).c_str()) - 1;
 
@@ -513,7 +459,7 @@ void Menu::CheckCMDSelectFromDB(string _str)
 	for (int i = 0; i < NUMBER_OF_COMPARISONS; i++)
 	{
 		cout << "\t" << i + 1 << ") " << "элементы " <<
-			NAMES_OF_COMPARISONS[i]	<< ' ' << field_value << "\n";
+			NAMES_OF_COMPARISONS[i] << ' ' << field_value << "\n";
 	}
 
 	// выбор типа сравнения элементов
@@ -525,8 +471,8 @@ void Menu::CheckCMDSelectFromDB(string _str)
 				{
 					return
 					IsThereANumber(num) &&
-					1 <= atoi(num.c_str()) &&
-					atoi(num.c_str()) <= NUMBER_OF_COMPARISONS;
+				1 <= atoi(num.c_str()) &&
+				atoi(num.c_str()) <= NUMBER_OF_COMPARISONS;
 				}
 	).c_str()) - 1;
 
@@ -545,7 +491,7 @@ void Menu::CheckCMDSelectFromDB(string _str)
 	cout << TABLE_CAP;
 
 	// печать базы данных
-	if(!m_db_manager.GetSelectedList().is_empty())
+	if (!m_db_manager.GetSelectedList().is_empty())
 	{
 		m_db_manager.GetSelectedList().for_each([](auto _el)
 			{
@@ -564,16 +510,16 @@ void Menu::CheckCMDReplaceDefaultDB(string _str)
 {
 	RETURN_IF_LIST_IS_EMPTY
 
-	// вызов функции выборки
-	if (m_db_manager.GetSelectedList().is_empty())
-	{
-		CheckCMDSelectFromDB("");
-	}
+		// вызов функции выборки
+		if (m_db_manager.GetSelectedList().is_empty())
+		{
+			CheckCMDSelectFromDB("");
+		}
 	// иначе печать базы данных
-	else
-	{
-		m_db_manager.PrintSelectedDBToConsole();
-	}
+		else
+		{
+			m_db_manager.PrintSelectedDBToConsole();
+		}
 
 	// получение ответа
 	string answ = CheckableRead(
@@ -600,8 +546,8 @@ void Menu::CheckCMDSortDB(string _str)
 {
 	RETURN_IF_LIST_IS_EMPTY
 
-	// Вывод названий полей в базе данных
-	PrintFieldsOfDataBase();
+		// Вывод названий полей в базе данных
+		PrintFieldsOfDataBase();
 
 	// индекс поля
 	int number_of_field =
@@ -640,4 +586,144 @@ void Menu::CheckCMDSortDB(string _str)
 
 	// сортировка
 	m_db_manager.SortDB(number_of_field, COMPARE::COMPARISONS[sort_type]);
+}
+
+void Menu::ReadFromConsole(string _str)
+{
+	INFO("\n\tВвод с консоли:");
+	MusicStuff ms;
+
+	// считывание места хранения
+	ms.SetStorage(
+		CheckableRead(
+			"\t[Введите НОСИТЕЛЬ]> "
+		)
+	);
+
+	// запись порядкового номера
+	ms.SetSerialNumber(
+		m_db_manager.GetLastIndexOfNode() + 1
+	);
+
+	// считывание названия трека
+	ms.SetName(
+		CheckableRead(
+			"\t[Введите НАЗВАНИЕ ТРЕКА]> "
+		)
+	);
+
+	// считывание имени исполнителя
+	ms.SetArtistsName(
+		CheckableRead(
+			"\t[Введите ИМЯ исполнителя]> "
+		)
+	);
+
+	// считывание фамилии исполнителя
+	ms.SetArtistsSurname(
+		CheckableRead(
+			"\t[Введите ФАМИЛИЮ исполнителя]> "
+		)
+	);
+
+	// считывание времени проигрывания трека
+	ms.SetSoundTime(
+		atoi(
+			CheckableRead(
+				"\t[Введите ВРЕМЯ ЗВУЧАНИЯ (минуты)]> ",
+				IsThereANotNegativeNumber
+			).c_str()
+		)
+	);
+
+	// считывание количества воспроизведений
+	ms.SetNumberOfPlays(
+		atoi(
+			CheckableRead(
+				"\t[Введите КОЛИЧЕСТВО ВОСПРОИЗВЕДЕНИЙ]> ",
+				IsThereANotNegativeNumber
+			).c_str()
+		)
+	);
+
+	// считывание цены
+	ms.SetPrice(
+		atoi(
+			CheckableRead(
+				"\t[Введите ЦЕНУ (рубли)]> ",
+				IsThereANotNegativeNumber
+			).c_str()
+		)
+	);
+
+	// запись считанного элемента в список
+	m_db_manager.ReadDBNodeFromNode(ms);
+}
+
+void Menu::ReadFromFile(string _str)
+{
+	INFO("\n\tЧтение из файла");
+
+	// проверка на наличие файлового пути
+	string temp = GetToken(_str);
+
+	// если путь до файла не указан
+	// запуск диалога
+	if (!temp.length())
+	{
+		// печать типов 
+		PrintNumberedArray(FILE_READ, FILE_READ_SIZE);
+
+		// ввод номера варианта
+		int read_type = ReadIndexInNumberedArray(
+			"Как считывать файл",
+			1, FILE_READ_SIZE
+		);
+
+		// использование файла по умолчанию
+		if (read_type == 0)
+		{
+			INFO("\n\tИспользование стандартного файла " + DB_FILE_PATH);
+			OpenReadFileAndReadDataToDB(DB_FILE_PATH);
+		}
+		// если надо ввести путь из консоли
+		else if (read_type == 1)
+		{
+			INFO("\n\tФайл должен быть в папке " + DB_FOLDER_PATH);
+			OpenReadFileAndReadDataToDB(
+				DB_FOLDER_PATH + CheckableRead("\tВведите имя файла:")
+			);
+		}
+	}
+	// если указан путь до файла
+	else
+	{
+		temp = GetToken(temp);
+		temp = DB_FOLDER_PATH + temp;
+		INFO("Использование файла " + temp);
+		OpenReadFileAndReadDataToDB(temp);
+	}
+}
+
+void Menu::OpenReadFileAndReadDataToDB(string _str)
+{
+	// создаем файловый поток и
+	// читаем информацию оттуда
+	ifstream fin(_str);
+
+	// если не удалось открыть файл
+	if (!fin.is_open())
+	{
+		// вывод сообщение об ошибке
+		INFO("Файл \"" + _str + "\" не был открыт");
+	}
+	// иначе записываем информацию из файлв в консоль
+	else
+	{
+		m_db_manager.ReadDBFromFile(fin);
+		INFO("Чтение выполнено");
+	}
+
+	// закрытие файла
+	fin.close();
 }

@@ -52,6 +52,13 @@ public:
 	// Получение номера команды в массиве
 	int GetNumberOfCommand(const string& _command);
 
+	// печать нумерованного массива параметров
+	void PrintNumberedArray(const string[], int);
+
+	// ввод номера параметра из нумерованного
+	// масива параметров
+	int ReadIndexInNumberedArray(const string _msg, int _min, int _max);
+
 	//****************************//
 	//		ФУНКЦИИ ПРОВЕРОК	  //
 	//****************************//
@@ -86,4 +93,18 @@ public:
 
 	// сортировка базы данных
 	void CheckCMDSortDB(string _str);
+
+	//****************************************//
+	//		ФУНКЦИИ ДЛЯ ФУНКЦИЙ ПРОВЕРОК	  //
+	//****************************************//
+
+	// чтение из консоли
+	void ReadFromConsole(string _str);
+
+	// чтение из файла
+	void ReadFromFile(string _str);
+
+	// открытие файла по пути _str 
+	// и запись данных в базу данных
+	void OpenReadFileAndReadDataToDB(string _str);
 };

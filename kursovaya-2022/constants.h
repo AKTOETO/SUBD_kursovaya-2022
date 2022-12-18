@@ -138,3 +138,23 @@ const string NAMES_OF_COMPARISONS[NUMBER_OF_COMPARISONS] =
 	"<=",
 	">=",
 };
+
+// размер массива для типов ввода информации
+const int INFO_ENTER_SIZE = 2;
+
+// способ ввода информации
+const string INFO_ENTER[INFO_ENTER_SIZE] =
+{
+	"консоль",
+	"файл"
+};
+
+// размера массива для мест считывания файла
+const int FILE_READ_SIZE = 2;
+
+// способ ввода информации
+const string FILE_READ[FILE_READ_SIZE] =
+{
+	"использование файла по умолчанию",
+	"ввести свой путь до файла"
+};
