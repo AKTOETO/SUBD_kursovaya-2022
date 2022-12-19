@@ -277,103 +277,51 @@ void Menu::CheckCMDSaveDBToFile(string _str)
 // удаление элеемнта из базы данных
 void Menu::CheckCMDDeleteDBNode(string _str)
 {
-	RETURN_IF_LIST_IS_EMPTY
+	RETURN_IF_LIST_IS_EMPTY;
 
-		// как удалять: с помощью индекса
-		// или с помощью поля
-		string temp = GetToken(_str);
+	// как удалять: с помощью индекса
+	// или с помощью поля
+	string temp = GetToken(_str);
 
-	// если было введено удаление по индексу
-	if (temp == "-и")
+	// если ключей нет
+	if (!temp.length())
 	{
-		// получение индекса
-		temp = GetToken(_str);
+		// запус диалога
+		INFO("\n\tВыберете тип удаления информации:");
 
-		// если есть индекс и temp число
-		if (temp.length() && IsThereANotNegativeNumber(temp))
-		{
-			// запись индекса в виде числа
-			int index = atoi(temp.c_str()) - 1;
+		// печать типов
+		PrintNumberedArray(DELETE_NODE, DELETE_NODE_SIZE);
 
-			// поиск элемента для удаления
-			node<MusicStuff>* nd = m_db_manager.FindNodeToDelete(index);
-
-			if (!nd)
-			{
-				FUNC_INFO("элемент не найден");
-				return;
-			}
-
-			// получение токена
-			temp = GetToken(_str);
-
-			// удаляем без диалогов
-			if (temp == "-с")
-			{
-				m_db_manager.DeleteDBNode(nd);
-			}
-			// удаляем с диалогом с пользователем
-			else
-			{
-				// уточнение у пользователя
-				// готов ли он удалить эти элементы			
-				INFO("\tЭлемент для удаления:");
-				cout << nd->get_data() << endl;
-
-				// получение ответа
-				string answ = CheckableRead(
-					"\t[Готовы ли вы удалить его? (да/нет)]> ",
-					[](string str)
-					{
-						return ToLowerCase(str) == "да" || ToLowerCase(str) == "нет";
-					}
-				);
-
-				// если ответ да
-				if (answ == "да")
-				{
-					m_db_manager.DeleteDBNode(nd);
-				}
-				else
-				{
-					INFO("Элемнет не удалены")
-				}
-			}
-		}
-		// если нет индекса
-		else
-		{
-			FUNC_INFO("не введено значение после -и или оно некорректно");
-		}
-	}
-	// если было введено удаление по полю
-	else if (temp == "-к")
-	{
-		// процедура выборки
-		CheckCMDSelectFromDB("");
-
-		// получение ответа
-		string answ = CheckableRead(
-			"\t[Готовы ли вы удалить их? (да/нет)]> ",
-			[](string str)
-			{
-				return ToLowerCase(str) == "да" || ToLowerCase(str) == "нет";
-			}
+		// ввод номера варианта
+		int type = ReadIndexInNumberedArray(
+			"Как удалять",
+			1, DELETE_NODE_SIZE
 		);
 
-		if (answ == "да")
+		// удаление по индексу
+		if (type == 0)
 		{
-			// удаление выбранных элементов из списка
-			m_db_manager.DeleteDBSelectedList();
+			DeleteNodeFromDBUseIndex("");
 		}
-		else
+		// удаление по значению поля
+		else if (type == 1)
 		{
-			INFO("Элемнеты не удалены")
+			DeleteNodeFromDBUseFieldValue("");
 		}
+	}
+	// если было введено удаление по индексу
+	else if (temp == "-и")
+	{
+		DeleteNodeFromDBUseIndex(_str);
+	}
+	// если было введено удаление по полю
+	else if (temp == "-п")
+	{
+		DeleteNodeFromDBUseFieldValue(_str);
 	}
 	else
 	{
-		INFO("CHECKCMDDELETEDBNODE: неизвестный ключ: \"" + temp + "\"");
+		FUNC_INFO("неизвестный ключ: \"" + temp + "\"");
 	}
 
 }
@@ -381,25 +329,25 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 // проверка команды	ПЕЧАТЬДАННЫХ
 void Menu::CheckCMDPrintDBToConsole(string _str)
 {
-	RETURN_IF_LIST_IS_EMPTY
+	RETURN_IF_LIST_IS_EMPTY;
 
-		m_db_manager.PrintDBToConsole();
+	m_db_manager.PrintDBToConsole();
 }
 
 // очистка базы данных
 void Menu::CheckCMDClearDB(string _str)
 {
-	INFO("База данных очищена")
-		m_db_manager.ClearDB();
+	m_db_manager.ClearDB();
+	INFO("База данных очищена");
 }
 
 // выбрать из базы данных определенны элементы
 void Menu::CheckCMDSelectFromDB(string _str)
 {
-	RETURN_IF_LIST_IS_EMPTY
+	RETURN_IF_LIST_IS_EMPTY;
 
-		// взятие ключа
-		string key = GetToken(_str);
+	// взятие ключа
+	string key = GetToken(_str);
 
 	// диалоговое сообщение
 	cout << "\n\tВозможные поля для выборки:\n";
@@ -736,10 +684,10 @@ void Menu::WriteDBToFile(string _str)
 	// запуск диалога
 	if (!temp.length())
 	{
-		
+
 		INFO("Использование стандартного файла " + OUT_DB_FILE_PATH);
 		OpenFileAndWriteDBToFile(OUT_DB_FILE_PATH);
-		
+
 	}
 	// если указан путь до файла
 	else
@@ -771,4 +719,107 @@ void Menu::OpenFileAndWriteDBToFile(string _str)
 
 	// закрытие файла
 	fout.close();
+}
+
+void Menu::DeleteNodeFromDBUseIndex(string _str)
+{
+	// получение индекса
+	string temp = GetToken(_str);
+
+	// если нет индекса
+	if (!temp.length())
+	{
+		// запуск диалога
+		INFO("\n\tВыберете индекс элемента:");
+
+		// печать списка
+		CheckCMDPrintDBToConsole("");
+
+		// ввод номера варианта
+		int index = ReadIndexInNumberedArray(
+			"Индекс удаляемого элемента",
+			1, m_db_manager.GetDefaultList().get_size()
+		);
+
+		// поиск элемента для удаления
+		node<MusicStuff>* nd = m_db_manager.FindNodeToDelete(index);
+
+		// если такого индекса нет
+		if (!nd)
+		{
+			FUNC_INFO("элемент не найден");
+			return;
+		}
+
+		// уточнение у пользователя
+		// готов ли он удалить эти элементы			
+		INFO("\n\tЭлемент для удаления:");
+		cout << TABLE_CAP << endl;
+		cout << nd->get_data() << endl;
+
+		// получение ответа
+		string answ = CheckableRead(
+			"\t[Готовы ли вы удалить его? (да/нет)]> ",
+			[](string str)
+			{
+				return ToLowerCase(str) == "да" || ToLowerCase(str) == "нет";
+			}
+		);
+
+		// если ответ да
+		if (answ == "да")
+		{
+			m_db_manager.DeleteDBNode(nd);
+		}
+		else
+		{
+			INFO("Элементы не удалены")
+		}
+
+	}
+	// если был введен индекс и он - число
+	else if (IsThereANotNegativeNumber(temp))
+	{
+		// поиск элемента для удаления
+		node<MusicStuff>* nd =
+			m_db_manager.FindNodeToDelete(atoi(temp.c_str()) - 1);
+
+		// если такого индекса нет
+		if (!nd)
+		{
+			FUNC_INFO("Элемент не найден");
+			return;
+		}
+
+		m_db_manager.DeleteDBNode(nd);
+	}
+	else
+	{
+		FUNC_INFO("неизвестный ключ: \"" + temp + "\"");
+	}
+}
+
+void Menu::DeleteNodeFromDBUseFieldValue(string _str)
+{
+	// процедура выборки
+	CheckCMDSelectFromDB("");
+
+	// получение ответа
+	string answ = CheckableRead(
+		"\t[Готовы ли вы удалить их? (да/нет)]> ",
+		[](string str)
+		{
+			return ToLowerCase(str) == "да" || ToLowerCase(str) == "нет";
+		}
+	);
+
+	if (answ == "да")
+	{
+		// удаление выбранных элементов из списка
+		m_db_manager.DeleteDBSelectedList();
+	}
+	else
+	{
+		INFO("Элементы не удалены")
+	}
 }

@@ -113,4 +113,10 @@ public:
 
 	// запись БД в файл
 	void OpenFileAndWriteDBToFile(string _str);
+
+	// удаление элемента по индексу
+	void DeleteNodeFromDBUseIndex(string _str);
+
+	// удаление элемента по значению поля
+	void DeleteNodeFromDBUseFieldValue(string _str);
 };

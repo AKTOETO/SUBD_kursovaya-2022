@@ -15,7 +15,6 @@ using namespace std;
 // вывод сообщения от имени функции
 #define FUNC_INFO(str) cout<<"\t" + string(__FUNCTION__) + ": " + str + "\n";
 
-
 // логотип
 const string PATH_TO_LOGO_FOLDER = "assets/logo_slides/";
 const string PATH_TO_LOGO = PATH_TO_LOGO_FOLDER + "logo.txt";
@@ -161,4 +160,14 @@ const string FILE_PATH[FILE_PATH_SIZE] =
 {
 	"использование файла по умолчанию",
 	"ввести свой путь до файла"
+};
+
+// размер массива с сообщениями для DELETE_NODE
+const int DELETE_NODE_SIZE = 2;
+
+// для функции удаления элементов из списка
+const string DELETE_NODE[DELETE_NODE_SIZE] =
+{
+	"удаление по индексу (один элемент)",
+	"удаление по значению поля (несколько элементов)"
 };
