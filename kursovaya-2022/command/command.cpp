@@ -26,11 +26,8 @@ Command::Command()
 
 Command::~Command()
 {
-	for (int i = 0; i < m_number_of_descriptions; i++)
-	{
-		delete m_cmd_attributes[i];
-	}
-	delete[] m_cmd_attributes;
+	if (m_cmd_attributes)
+		delete[] m_cmd_attributes;
 }
 
 void Command::SetCheckFunction(CheckFunc _check_func)
