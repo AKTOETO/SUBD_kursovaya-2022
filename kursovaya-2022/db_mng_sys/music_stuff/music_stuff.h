@@ -1,6 +1,5 @@
 #pragma once
 #include "../../support_func/support_func.hpp"
-#include "../name_surname/name_surname.h"
 #include "../../../list/my_list/my_list.hpp"
 
 // поле базы данных

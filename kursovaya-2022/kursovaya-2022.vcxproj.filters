@@ -24,9 +24,6 @@
     <ClCompile Include="command\command.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="db_mng_sys\name_surname\name_surname.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="db_mng_sys\music_stuff\music_stuff.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -45,9 +42,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="command\command.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="db_mng_sys\name_surname\name_surname.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="db_mng_sys\music_stuff\music_stuff.h">

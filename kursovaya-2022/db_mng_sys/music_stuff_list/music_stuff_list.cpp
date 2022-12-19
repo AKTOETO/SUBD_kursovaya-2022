@@ -41,6 +41,27 @@ my_list<MusicStuff>& DataBaseManager::GetDefaultList()
 	return m_default_db;
 }
 
+
+my_list<string>* DataBaseManager::GetDataInField(int _index) const
+{
+	// выходной список
+	my_list<string>* out = new my_list<string>;
+
+	// элемент для прохода всего списка
+	node<MusicStuff>* el = m_default_db.get_begin();
+
+	while (el)
+	{
+		string str = el->get_data().GetField(_index).GetValue();
+		if (!out->is_there_element(str))
+		{
+			out->push(str);
+		}
+		el = el->get_next();
+	}
+	return out;
+}
+
 void DataBaseManager::SaveDBToFile(ostream& _out_stream)
 {
 	node<MusicStuff>* el = m_default_db.get_begin();
@@ -54,14 +75,6 @@ void DataBaseManager::SaveDBToFile(ostream& _out_stream)
 		// переход к следующему элементу
 		el = el->get_next();
 	}
-}
-
-void DataBaseManager::ReadDBNodeFromString(string _str)
-{
-	// добавление элемента в список
-	m_default_db.push(_str);
-
-	IndexesRecalculation();
 }
 
 void DataBaseManager::ReadDBNodeFromNode(MusicStuff _obj)
@@ -94,19 +107,6 @@ node<MusicStuff>* DataBaseManager::FindNodeToDelete(int _index)
 	}
 
 	return temp;
-}
-
-void DataBaseManager::DeleteDBNode(string _str)
-{
-	IndexesRecalculation();
-}
-
-void DataBaseManager::DeleteDBNode(int _index)
-{
-	// удаление необходимого элемента
-	m_default_db.delete_node(FindNodeToDelete(_index));
-
-	IndexesRecalculation();
 }
 
 void DataBaseManager::DeleteDBNode(node<MusicStuff>* _node)
@@ -195,25 +195,6 @@ void DataBaseManager::PrintSelectedDBToConsole() const
 	}
 }
 
-my_list<string>* DataBaseManager::GetDataInField(int _index) const
-{
-	// выходной список
-	my_list<string>* out = new my_list<string>;
-
-	// элемент для прохода всего списка
-	node<MusicStuff>* el = m_default_db.get_begin();
-
-	while (el)
-	{
-		string str = el->get_data().GetField(_index).GetValue();
-		if (!out->is_there_element(str))
-		{
-			out->push(str);
-		}
-		el = el->get_next();
-	}
-	return out;
-}
 
 void DataBaseManager::ClearDB()
 {

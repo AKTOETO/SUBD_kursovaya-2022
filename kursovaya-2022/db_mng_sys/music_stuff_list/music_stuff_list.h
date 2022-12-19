@@ -16,10 +16,12 @@ public:
 	// Деструктор по умолчанию
 	~DataBaseManager();
 
+	// Get Методы
+
 	// получить последний элемент
 	node<MusicStuff>* GetLastNode() const;
 
-	// получит первый элемент
+	// получить первый элемент
 	node<MusicStuff>* GetFirstNode() const;
 
 	// получение индекса последнего элемента из списка
@@ -31,14 +33,16 @@ public:
 	// получение основного списка элементов
 	my_list<MusicStuff>& GetDefaultList();
 
+	// печать значений поля по индексу
+	my_list<string>* GetDataInField(int _index) const;
+
+	// Функции менеджера
+
 	// сохранение базы данных в файл
 	void SaveDBToFile(ostream& _out_stream);
 
 	// считать базу данных из файла
 	void ReadDBFromFile(ifstream& _read_stream);
-
-	// считать элемент из строки
-	void ReadDBNodeFromString(string _node);
 
 	// считать элемень из уже существующего
 	void ReadDBNodeFromNode(MusicStuff);
@@ -47,8 +51,6 @@ public:
 	node<MusicStuff>* FindNodeToDelete(int _index);
 
 	// удалить элемент из базы данных
-	void DeleteDBNode(string _str);
-	void DeleteDBNode(int _index);
 	void DeleteDBNode(node<MusicStuff>* _node);
 	void DeleteDBSelectedList();
 
@@ -57,9 +59,6 @@ public:
 
 	// печать выборочной БД в поток
 	void PrintSelectedDBToConsole() const;
-
-	// печать значений поля по индексу
-	my_list<string>* GetDataInField(int _index) const;
 
 	// очистить базу данных
 	void ClearDB();
