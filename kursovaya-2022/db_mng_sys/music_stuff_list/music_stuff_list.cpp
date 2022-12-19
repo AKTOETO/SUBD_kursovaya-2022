@@ -2,12 +2,10 @@
 
 DataBaseManager::DataBaseManager()
 {
-	//m_selected_nodes = NULL;
 }
 
 DataBaseManager::~DataBaseManager()
 {
-	//delete m_selected_nodes;
 }
 
 node<MusicStuff>* DataBaseManager::GetLastNode() const
@@ -40,7 +38,6 @@ my_list<MusicStuff>& DataBaseManager::GetDefaultList()
 {
 	return m_default_db;
 }
-
 
 my_list<string>* DataBaseManager::GetDataInField(int _index) const
 {
@@ -195,7 +192,6 @@ void DataBaseManager::PrintSelectedDBToConsole() const
 	}
 }
 
-
 void DataBaseManager::ClearDB()
 {
 	m_default_db.clear();
@@ -281,7 +277,7 @@ void DataBaseManager::IndexesRecalculation()
 		MusicStuff temp_ms = temp->get_data();
 		temp_ms.SetSerialNumber(index);
 
-		temp->set_data(temp_ms);// на этой строке ошибка
+		temp->set_data(temp_ms);
 
 		index++;
 		temp = temp->get_next();

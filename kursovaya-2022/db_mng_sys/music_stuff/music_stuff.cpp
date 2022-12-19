@@ -2,14 +2,6 @@
 
 MusicStuff::MusicStuff()
 {
-	/*m_storage.m_string = new string;
-	m_serial_number.m_string = new string;
-	m_name.m_string = new string;
-	m_artist_name.m_namesurname = new NameSurname;
-	m_sound_time.m_number = new int;
-	m_number_of_plays.m_number = new int;
-	m_price.m_number = new int;*/
-
 	m_fields = new FieldsType[NUMBER_OF_FIELDS];
 
 	m_fields[0].m_string = new string;		// носитель
@@ -26,26 +18,11 @@ MusicStuff::MusicStuff(const MusicStuff& _obj)
 	:MusicStuff()
 {
 	*this = _obj;
-	/**STORAGE		 = *_obj.STORAGE;
-	*SERIAL_NUMBER	 = *_obj.SERIAL_NUMBER;
-	*NAME			 = *_obj.NAME;
-	*ARTIST_NAME	 = *_obj.ARTIST_NAME;
-	*ARTIST_SURNAME	 = *_obj.ARTIST_SURNAME;
-	*SOUND_TIME		 = *_obj.SOUND_TIME;
-	*NUMBER_OF_PLAYS = *_obj.NUMBER_OF_PLAYS;
-	*PRICE			 = *_obj.PRICE;*/
 }
 
 MusicStuff::MusicStuff(string& _input_string)
 	:MusicStuff()
-{	
-	// Cтруктура данных при считывании из потока ввода должна выглядеть так
-	// Предполагается, что максимальная длина строки с данными не превышает
-	// 
-	// <ПОР.НОМЕР>:<НОСИТЕЛЬ>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛН.>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
-	// ....
-	// <ПОР.НОМЕР>:<НОСИТЕЛЬ>:<НАЗВАНИЕ>:<ИМЯ ИСПОЛН.>:<ФАМИЛ. ИСПОЛН.>:<ВРЕМЯ>:<ВОСПРОИЗВ.>:<ЦЕНА>
-
+{
 	// заполнение класса MusicStuff
 	*SERIAL_NUMBER = GET_INT_DATA(_input_string);
 	*STORAGE = GET_DATA(_input_string);
