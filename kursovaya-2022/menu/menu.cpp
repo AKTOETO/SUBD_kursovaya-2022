@@ -453,18 +453,18 @@ void Menu::CheckCMDSelectFromDB(string _str)
 // заменить исходную бд полученной из выборки
 void Menu::CheckCMDReplaceDefaultDB(string _str)
 {
-	RETURN_IF_LIST_IS_EMPTY
+	RETURN_IF_LIST_IS_EMPTY;
 
-		// вызов функции выборки
-		if (m_db_manager.GetSelectedList().is_empty())
-		{
-			CheckCMDSelectFromDB("");
-		}
+	// вызов функции выборки
+	if (m_db_manager.GetSelectedList().is_empty())
+	{
+		CheckCMDSelectFromDB("");
+	}
 	// иначе печать базы данных
-		else
-		{
-			m_db_manager.PrintSelectedDBToConsole();
-		}
+	else
+	{
+		m_db_manager.PrintSelectedDBToConsole();
+	}
 
 	// получение ответа
 	string answ = CheckableRead(
@@ -489,10 +489,10 @@ void Menu::CheckCMDReplaceDefaultDB(string _str)
 
 void Menu::CheckCMDSortDB(string _str)
 {
-	RETURN_IF_LIST_IS_EMPTY
+	RETURN_IF_LIST_IS_EMPTY;
 
-		// Вывод названий полей в базе данных
-		PrintFieldsOfDataBase();
+	// Вывод названий полей в базе данных
+	PrintFieldsOfDataBase();
 
 	// индекс поля
 	int number_of_field =
@@ -508,6 +508,8 @@ void Menu::CheckCMDSortDB(string _str)
 				}
 	).c_str()) - 1;
 
+	INFO("\n\tТипы сортировки:");
+
 	// вывод типов сортировок
 	for (int i = 0; i < NUMBER_OF_SORTS; i++)
 	{
@@ -518,7 +520,7 @@ void Menu::CheckCMDSortDB(string _str)
 	int sort_type =
 		atoi(
 			CheckableRead(
-				"\t[По как сортировать]> ",
+				"\t[Каким образом сортировать]> ",
 				[](string num)
 				{
 					return
@@ -531,6 +533,8 @@ void Menu::CheckCMDSortDB(string _str)
 
 	// сортировка
 	m_db_manager.SortDB(number_of_field, COMPARE::COMPARISONS[sort_type]);
+
+	INFO("Список отсортирован");
 }
 
 void Menu::ReadDBFromConsole(string _str)
