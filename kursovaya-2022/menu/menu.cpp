@@ -167,7 +167,7 @@ void Menu::CheckCMDHelp(string _str)
 	{
 		// если этот аргумент - команда
 		// выводим подробную инфу по ней
-		if (IsCommandCorrect(GetToken(_str)))
+		if (IsCommandCorrect(_str))
 		{
 			cout << CMD_FL_DESCR(GetNumberOfCommand(_str)) << endl;
 		}
