@@ -347,9 +347,6 @@ void Menu::CheckCMDSelectFromDB(string _str)
 {
 	RETURN_IF_LIST_IS_EMPTY;
 
-	// взятие ключа
-	string key = GetToken(_str);
-
 	// диалоговое сообщение
 	cout << "\n\tВозможные поля для выборки:\n";
 

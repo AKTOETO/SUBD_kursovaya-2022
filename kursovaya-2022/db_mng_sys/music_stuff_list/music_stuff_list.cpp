@@ -210,7 +210,7 @@ void DataBaseManager::SortDB(int _field_index, bool _comp(string, string))
 				_comp(
 					el->get_data().GetField(_field_index).GetValue(),
 					el2->get_data().GetField(_field_index).GetValue()
-					)
+				)
 				)
 			{
 				MusicStuff temp = el->get_data();
@@ -227,9 +227,6 @@ void DataBaseManager::SortDB(int _field_index, bool _comp(string, string))
 
 void DataBaseManager::SelectDB(int _field_index, string _value, bool _comp(string, string))
 {
-	// очистка выборочной базы данных
-	m_selected_nodes.clear();
-
 	// элемент для прохождения по списку
 	node<MusicStuff>* temp = m_default_db.get_begin();
 
@@ -242,7 +239,8 @@ void DataBaseManager::SelectDB(int _field_index, string _value, bool _comp(strin
 			_comp(
 				temp->get_data().GetField(_field_index).GetValue(),
 				_value
-				)
+			) &&
+			!m_selected_nodes.is_there_element(temp)
 			)
 		{
 			m_selected_nodes.push(temp);
@@ -286,14 +284,5 @@ void DataBaseManager::IndexesRecalculation()
 
 void DataBaseManager::ClearDBSelectedList()
 {
-	node<node<MusicStuff>*>* el = m_selected_nodes.get_begin();
-	// отвязываю все указатели от выборочного списка
-	while (el)
-	{
-		el->set_data(NULL);
-		el = el->get_next();
-	}
-
-	// удаление самого выборочного списка
 	m_selected_nodes.clear();
 }

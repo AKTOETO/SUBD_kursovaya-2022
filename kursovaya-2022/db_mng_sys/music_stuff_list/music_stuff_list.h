@@ -64,11 +64,11 @@ public:
 	void ClearDB();
 
 	// сортировать базу данных
-	void SortDB(int _field_index, bool(string, string) = COMPARE::IsLower);
+	void SortDB(int _field_index, bool _comp(string, string) = COMPARE::IsLower);
 
 	// выборка элементов
-	void SelectDB(int _field_index, string _value
-		, bool(string, string) = COMPARE::IsEqual);
+	void SelectDB(int _field_index, string _value,
+		bool _comp(string, string) = COMPARE::IsEqual);
 
 	// замена основной базы данных той, которая в выборке
 	void ReplaceDefaultDataBase();
