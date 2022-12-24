@@ -7,7 +7,9 @@
 #include <fstream>
 #include <iomanip>
 
-using namespace std;
+using std::string;
+using std::cin;
+using std::cout;
 
 // вывод в консоль сообщения
 #define INFO(str) cout<<"\t"<<str<<"\n";

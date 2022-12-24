@@ -456,16 +456,9 @@ void Menu::CheckCMDReplaceDefaultDB(string _str)
 {
 	RETURN_IF_LIST_IS_EMPTY;
 
+	// Если выбранный лист пуст,
 	// вызов функции выборки
-	if (m_db_manager.GetSelectedList().is_empty())
-	{
-		CheckCMDSelectFromDB("");
-	}
-	// иначе печать базы данных
-	else
-	{
-		m_db_manager.PrintSelectedDBToConsole();
-	}
+	IF_SELECT_LIST_IS_EMPTY_FILL_IT_ELSE_PRINT;
 
 	// получение ответа
 	string answ = CheckableRead(
@@ -480,6 +473,7 @@ void Menu::CheckCMDReplaceDefaultDB(string _str)
 	{
 		INFO("Замена текущей базы");
 		m_db_manager.ReplaceDefaultDataBase();
+		m_db_manager.ClearDBSelectedList();
 	}
 	else
 	{
@@ -759,7 +753,7 @@ void Menu::DeleteNodeFromDBUseIndex(string _str)
 		// уточнение у пользователя
 		// готов ли он удалить эти элементы			
 		INFO("\n\tЭлемент для удаления:");
-		cout << TABLE_CAP << endl;
+		cout << TABLE_CAP;
 		cout << nd->get_data() << endl;
 
 		// получение ответа
@@ -806,8 +800,9 @@ void Menu::DeleteNodeFromDBUseIndex(string _str)
 
 void Menu::DeleteNodeFromDBUseFieldValue(string _str)
 {
-	// процедура выборки
-	CheckCMDSelectFromDB("");
+	// Заполнение списка выборок, если он пуст
+	// иначе - печать
+	IF_SELECT_LIST_IS_EMPTY_FILL_IT_ELSE_PRINT;
 
 	// получение ответа
 	string answ = CheckableRead(
@@ -821,7 +816,7 @@ void Menu::DeleteNodeFromDBUseFieldValue(string _str)
 	if (answ == "да")
 	{
 		// удаление выбранных элементов из списка
-		m_db_manager.DeleteDBSelectedList();
+		m_db_manager.DeleteDBSelectedListFromDefaultDB();
 	}
 	else
 	{

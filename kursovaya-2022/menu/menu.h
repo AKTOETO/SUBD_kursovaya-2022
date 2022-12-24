@@ -21,7 +21,7 @@ class Menu
 	* ...
 	**/	
 	Command* m_command;
-
+	
 	// Список музыкальных товаров
 	DataBaseManager m_db_manager;
 
@@ -37,6 +37,16 @@ class Menu
 		FUNC_INFO("база данных пуста");\
 		return;\
 	}
+
+	// Если дополнительный список пуст,
+	// вызываем функцию выборки элементов из БД
+	// иначе печатаем список
+#define IF_SELECT_LIST_IS_EMPTY_FILL_IT_ELSE_PRINT \
+	if(m_db_manager.GetSelectedList().is_empty())\
+		CheckCMDSelectFromDB("");\
+	else\
+		m_db_manager.PrintSelectedDBToConsole();
+
 
 public:
 	// конструктор и деструктор

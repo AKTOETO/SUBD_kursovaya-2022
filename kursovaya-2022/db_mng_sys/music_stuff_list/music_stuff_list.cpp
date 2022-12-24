@@ -112,7 +112,7 @@ void DataBaseManager::DeleteDBNode(node<MusicStuff>* _node)
 	IndexesRecalculation();
 }
 
-void DataBaseManager::DeleteDBSelectedList()
+void DataBaseManager::DeleteDBSelectedListFromDefaultDB()
 {
 	node<node<MusicStuff>*>* el = m_selected_nodes.get_begin();
 	while (el)
@@ -188,7 +188,7 @@ void DataBaseManager::PrintSelectedDBToConsole() const
 	}
 	else
 	{
-		FUNC_INFO("Список пуст");
+		FUNC_INFO("Дополнительный список пуст");
 	}
 }
 
@@ -282,4 +282,18 @@ void DataBaseManager::IndexesRecalculation()
 		index++;
 		temp = temp->get_next();
 	}
+}
+
+void DataBaseManager::ClearDBSelectedList()
+{
+	node<node<MusicStuff>*>* el = m_selected_nodes.get_begin();
+	// отвязываю все указатели от выборочного списка
+	while (el)
+	{
+		el->set_data(NULL);
+		el = el->get_next();
+	}
+
+	// удаление самого выборочного списка
+	m_selected_nodes.clear();
 }

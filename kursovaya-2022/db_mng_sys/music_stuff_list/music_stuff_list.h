@@ -52,7 +52,7 @@ public:
 
 	// удалить элемент из базы данных
 	void DeleteDBNode(node<MusicStuff>* _node);
-	void DeleteDBSelectedList();
+	void DeleteDBSelectedListFromDefaultDB();
 
 	// печать в поток
 	void PrintDBToConsole() const;
@@ -75,4 +75,9 @@ public:
 
 	// перерасчет индексов
 	void IndexesRecalculation();
+
+	// очистка выборочной базы данных
+	// (не удаление элементов списка,
+	// а только очистка самого списка)
+	void ClearDBSelectedList();
 };
