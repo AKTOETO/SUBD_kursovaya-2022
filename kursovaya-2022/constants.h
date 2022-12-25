@@ -173,3 +173,20 @@ const string DELETE_NODE[DELETE_NODE_SIZE] =
 	"удаление по индексу (один элемент)",
 	"удаление по значению поля (несколько элементов)"
 };
+
+// количество типов операции выбора
+const int SELECT_TYPE_SIZE = 2;
+
+// тип выбора элементов
+enum class SELECTTYPE
+{
+	AND = 0,
+	OR
+};
+
+// типы операция для выбора
+const string SELECT_TYPE[SELECT_TYPE_SIZE] =
+{
+	"условие И условие",
+	"условие ИЛИ условие"
+};

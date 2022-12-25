@@ -1,7 +1,7 @@
 #pragma once
 #include "../music_stuff/music_stuff.h"
 #include "../../../list/my_list/my_list.hpp"
-	
+
 class DataBaseManager
 {
 	// база данных со всеми данными
@@ -11,6 +11,7 @@ class DataBaseManager
 	my_list<node<MusicStuff>*> m_selected_nodes;
 
 public:
+
 	//  онструктор по умолчанию
 	DataBaseManager();
 	// ƒеструктор по умолчанию
@@ -68,7 +69,8 @@ public:
 
 	// выборка элементов
 	void SelectDB(int _field_index, string _value,
-		bool _comp(string, string) = COMPARE::IsEqual);
+		bool _comp(string, string) = COMPARE::IsEqual,
+		SELECTTYPE _sel_type = SELECTTYPE::OR);
 
 	// замена основной базы данных той, котора€ в выборке
 	void ReplaceDefaultDataBase();

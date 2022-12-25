@@ -225,27 +225,57 @@ void DataBaseManager::SortDB(int _field_index, bool _comp(string, string))
 	IndexesRecalculation();
 }
 
-void DataBaseManager::SelectDB(int _field_index, string _value, bool _comp(string, string))
+void DataBaseManager::SelectDB(
+	int _field_index, string _value,
+	bool _comp(string, string), SELECTTYPE _sel_type
+)
 {
-	// элемент для прохождения по списку
-	node<MusicStuff>* temp = m_default_db.get_begin();
-
-	// проходимся по всей базе данных и 
-	// отбираем элементы со значением _value
-	// в поле с индексом _field_index
-	while (temp)
+	// если стоит SELECTTYPE::OR
+	if (_sel_type == SELECTTYPE::OR)
 	{
-		if (
-			_comp(
-				temp->get_data().GetField(_field_index).GetValue(),
-				_value
-			) &&
-			!m_selected_nodes.is_there_element(temp)
-			)
+		// элемент для прохождения по списку
+		node<MusicStuff>* temp = m_default_db.get_begin();
+
+		// проходимся по всей базе данных и 
+		// отбираем элементы со значением _value
+		// в поле с индексом _field_index
+		while (temp)
 		{
-			m_selected_nodes.push(temp);
+			if (
+				_comp(
+					temp->get_data().GetField(_field_index).GetValue(),
+					_value
+				) &&
+				!m_selected_nodes.is_there_element(temp)
+				)
+			{
+				m_selected_nodes.push(temp);
+			}
+			temp = temp->get_next();
 		}
-		temp = temp->get_next();
+	}
+	else if (_sel_type == SELECTTYPE::AND)
+	{
+		// элемент для прохождения по списку
+		node<node<MusicStuff>*>* temp = m_selected_nodes.get_begin();
+
+		// проходимся по всей базе данных и 
+		// удаляем элементы, не подходящие под
+		// условия
+		while (temp)
+		{
+			node<node<MusicStuff>*>* next = temp->get_next();
+			if (
+				!_comp(
+					temp->get_data()->get_data().GetField(_field_index).GetValue(),
+					_value
+				)
+				)
+			{
+				m_selected_nodes.delete_node(temp);
+			}
+			temp = next;
+		}
 	}
 }
 

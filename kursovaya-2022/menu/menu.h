@@ -129,4 +129,13 @@ public:
 
 	// удаление элемента по значению поля
 	void DeleteNodeFromDBUseFieldValue(string _str);
+
+	// диалог для единичного выбора элемента
+	void SelectOnceDialog(int& _field_number,string& _field_value,int& _comp_type);
+
+	// основной диалог выбора
+	void SelectDialog(
+		SELECTTYPE _sel_type =
+		SELECTTYPE::OR
+	);
 };

@@ -191,7 +191,7 @@ void Menu::CheckCMDReadDB(string _str)
 	if (!temp.length())
 	{
 		// запуск режима диалога
-		cout << "\n\tВыберете способ ввода информации:\n";
+		cout << "\n\tВыберите способ ввода информации:\n";
 
 		// Вывод названий полей в базе данных
 		PrintNumberedArray(INFO_ENTER, INFO_ENTER_SIZE);
@@ -227,6 +227,9 @@ void Menu::CheckCMDReadDB(string _str)
 	{
 		FUNC_INFO("неизвестный ключ: \"" + temp + "\"");
 	}
+
+	// печать считанной бд
+	CheckCMDPrintDBToConsole("");
 }
 
 // сохранение базы данных в файл
@@ -241,7 +244,7 @@ void Menu::CheckCMDSaveDBToFile(string _str)
 	// запуск диалога
 	if (!temp.length())
 	{
-		INFO("\n\tВыберете место вывода информации:");
+		INFO("\n\tВыберите место вывода информации:");
 
 		// печать типов 
 		PrintNumberedArray(FILE_PATH, FILE_PATH_SIZE);
@@ -275,7 +278,7 @@ void Menu::CheckCMDSaveDBToFile(string _str)
 	}
 }
 
-// удаление элеемнта из базы данных
+// удаление элемента из базы данных
 void Menu::CheckCMDDeleteDBNode(string _str)
 {
 	RETURN_IF_LIST_IS_EMPTY;
@@ -288,7 +291,7 @@ void Menu::CheckCMDDeleteDBNode(string _str)
 	if (!temp.length())
 	{
 		// запус диалога
-		INFO("\n\tВыберете тип удаления информации:");
+		INFO("\n\tВыберите тип удаления информации:");
 
 		// печать типов
 		PrintNumberedArray(DELETE_NODE, DELETE_NODE_SIZE);
@@ -347,105 +350,53 @@ void Menu::CheckCMDSelectFromDB(string _str)
 {
 	RETURN_IF_LIST_IS_EMPTY;
 
-	// диалоговое сообщение
-	cout << "\n\tВозможные поля для выборки:\n";
+	// чистка выборочной БД
+	m_db_manager.ClearDBSelectedList();
 
-	// Вывод названий полей в базе данных
-	PrintFieldsOfDataBase();
+	// для хранения ответа
+	string answ;
 
-	// индекс поля
-	int number_of_field =
-		atoi(
-			CheckableRead(
-				"\t[По какому полю осуществлять выбор]> ",
-				[](string num)
-				{
-					return
-					IsThereANumber(num) &&
-				1 <= atoi(num.c_str()) &&
-				atoi(num.c_str()) <= NUMBER_OF_FIELDS;
-				}
-	).c_str()) - 1;
+	// изначальный выбор
+	SelectDialog();
 
-	// получение списка значений поля
-	my_list<string> out = *m_db_manager.GetDataInField(number_of_field);
-
-	// печать списка
-	cout << "\n\tУникальные значения этого поля:\n";
-	int ind = 1;
-	out.for_each([&ind](node<string>* el)
-		{
-			cout << "\t" << ind++ << ") " << el->get_data() << "\n";
-		}
-	);
-
-	// какое значение искать в поле
-	int number_of_value =
-		atoi(
-			CheckableRead(
-				"\t[Какое значение использовать в поле]> ",
-				[&out](string num)
-				{
-					return
-					IsThereANumber(num) &&
-				1 <= atoi(num.c_str()) &&
-				atoi(num.c_str()) <= out.get_size();
-				}
-	).c_str()) - 1;
-
-	// значение поля под индексом number_of_value 
-	// с которым будем сравнивать
-	string field_value = out.get_element_by_index(number_of_value)->get_data();
-
-	cout << "\n\tЕсли неравенство верно, происходит выбор. Типы сравнений:\n";
-	// вывод типов сравнений
-	for (int i = 0; i < NUMBER_OF_COMPARISONS; i++)
+	do
 	{
-		cout << "\t" << i + 1 << ") " << "элементы " <<
-			NAMES_OF_COMPARISONS[i] << ' ' << field_value << "\n";
-	}
-
-	// выбор типа сравнения элементов
-	int comp_type =
-		atoi(
-			CheckableRead(
-				"\t[Какой тип сравнения использовать]> ",
-				[](string num)
-				{
-					return
-					IsThereANumber(num) &&
-				1 <= atoi(num.c_str()) &&
-				atoi(num.c_str()) <= NUMBER_OF_COMPARISONS;
-				}
-	).c_str()) - 1;
-
-	// выборка элементов списка с определенным
-	// значением определенного поля
-	m_db_manager.SelectDB
-	(
-		number_of_field,
-		field_value,
-		COMPARE::COMPARISONS[comp_type]
-	);
-
-	cout << "\n[Выбраны следующие элементы]> \n";
-
-	// Вывод шапки таблицы
-	cout << TABLE_CAP;
-
-	// печать базы данных
-	if (!m_db_manager.GetSelectedList().is_empty())
-	{
-		m_db_manager.GetSelectedList().for_each([](auto _el)
+		// нужен ли множественный выбор?
+		answ = CheckableRead(
+			"\t[Нужен ли множественный выбор? (да/нет)]> ",
+			[](string str)
 			{
-				cout << _el->get_data()->get_data() << endl;
+				return ToLowerCase(str) == "да" || ToLowerCase(str) == "нет";
 			}
 		);
-	}
-	else
-	{
-		INFO("\t Такие элементы не найдены");
-	}
+
+		if (answ == "да")
+		{
+			INFO("\n\tВыберите тип сравнения для выбора:");
+
+			// печать списка возмодных операций выбора
+			PrintNumberedArray(SELECT_TYPE, SELECT_TYPE_SIZE);
+
+			// ввод номера варианта
+			int type = ReadIndexInNumberedArray(
+				"Как выбирать",
+				1, SELECT_TYPE_SIZE
+			);
+
+			// печать базы данных, из которой выбираем
+			if (SELECTTYPE(type) == SELECTTYPE::AND)
+				m_db_manager.PrintSelectedDBToConsole();
+			else
+				m_db_manager.PrintDBToConsole();
+
+			SelectDialog(SELECTTYPE(type));
+		}
+
+	} while (answ == "да");
+
+	// печать выборочной базы данных
+	INFO("\n\tВыбранные элементы:");
+	m_db_manager.PrintSelectedDBToConsole();
 }
 
 // заменить исходную бд полученной из выборки
@@ -680,10 +631,8 @@ void Menu::WriteDBToFile(string _str)
 	// запуск диалога
 	if (!temp.length())
 	{
-
 		INFO("Использование стандартного файла " + OUT_DB_FILE_PATH);
 		OpenFileAndWriteDBToFile(OUT_DB_FILE_PATH);
-
 	}
 	// если указан путь до файла
 	else
@@ -726,7 +675,7 @@ void Menu::DeleteNodeFromDBUseIndex(string _str)
 	if (!temp.length())
 	{
 		// запуск диалога
-		INFO("\n\tВыберете индекс элемента:");
+		INFO("\n\tВыберите индекс элемента:");
 
 		// печать списка
 		CheckCMDPrintDBToConsole("");
@@ -818,5 +767,121 @@ void Menu::DeleteNodeFromDBUseFieldValue(string _str)
 	else
 	{
 		INFO("Элементы не удалены")
+	}
+}
+
+void Menu::SelectOnceDialog(int& _field_number, string& _field_value, int& _comp_type)
+{
+	// диалоговое сообщение
+	cout << "\n\tВозможные поля для выборки:\n";
+
+	// Вывод названий полей в базе данных
+	PrintFieldsOfDataBase();
+
+	// индекс поля
+	_field_number =
+		atoi(
+			CheckableRead(
+				"\t[По какому полю осуществлять выбор]> ",
+				[](string num)
+				{
+					return
+					IsThereANumber(num) &&
+				1 <= atoi(num.c_str()) &&
+				atoi(num.c_str()) <= NUMBER_OF_FIELDS;
+				}
+	).c_str()) - 1;
+
+	// получение списка значений поля
+	my_list<string> out = *m_db_manager.GetDataInField(_field_number);
+
+	// печать списка
+	cout << "\n\tУникальные значения этого поля:\n";
+	int ind = 1;
+	out.for_each([&ind](node<string>* el)
+		{
+			cout << "\t" << ind++ << ") " << el->get_data() << "\n";
+		}
+	);
+
+	// какое значение искать в поле
+	int number_of_value =
+		atoi(
+			CheckableRead(
+				"\t[Какое значение использовать в поле]> ",
+				[&out](string num)
+				{
+					return
+					IsThereANumber(num) &&
+				1 <= atoi(num.c_str()) &&
+				atoi(num.c_str()) <= out.get_size();
+				}
+	).c_str()) - 1;
+
+	// значение поля под индексом number_of_value 
+	// с которым будем сравнивать
+	_field_value = out.get_element_by_index(number_of_value)->get_data();
+
+	cout << "\n\tЕсли неравенство верно, происходит выбор. Типы сравнений:\n";
+	// вывод типов сравнений
+	for (int i = 0; i < NUMBER_OF_COMPARISONS; i++)
+	{
+		cout << "\t" << i + 1 << ") " << "элементы " <<
+			NAMES_OF_COMPARISONS[i] << ' ' << _field_value << "\n";
+	}
+
+	// выбор типа сравнения элементов
+	_comp_type =
+		atoi(
+			CheckableRead(
+				"\t[Какой тип сравнения использовать]> ",
+				[](string num)
+				{
+					return
+					IsThereANumber(num) &&
+				1 <= atoi(num.c_str()) &&
+				atoi(num.c_str()) <= NUMBER_OF_COMPARISONS;
+				}
+	).c_str()) - 1;
+}
+
+void Menu::SelectDialog(SELECTTYPE _sel_type)
+{
+	// получение индекса поля
+	// значения этого поля
+	// операции сравнения
+	int field_number = 0;
+	string field_value;
+	int comp_type = 0;
+
+	SelectOnceDialog(field_number, field_value, comp_type);
+
+	// выборка элементов списка с определенным
+	// значением определенного поля
+	m_db_manager.SelectDB
+	(
+		field_number,
+		field_value,
+		COMPARE::COMPARISONS[comp_type],
+		_sel_type
+	);
+
+	cout << "\n[Выбраны следующие элементы]> \n";
+
+	// печать базы данных
+	if (!m_db_manager.GetSelectedList().is_empty())
+	{
+		// Вывод шапки таблицы
+		cout << TABLE_CAP;
+
+		m_db_manager.GetSelectedList().for_each([](auto _el)
+			{
+				cout << _el->get_data()->get_data() << endl;
+			}
+		);
+	}
+	else
+	{
+		INFO("Такие элементы не найдены");
 	}
 }
