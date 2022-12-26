@@ -22,7 +22,7 @@ const string PATH_TO_LOGO_FOLDER = "assets/logo_slides/";
 const string PATH_TO_LOGO = PATH_TO_LOGO_FOLDER + "logo.txt";
 
 // строка слева от введенной команды
-const string DBMS_CONSOLE_REQUEST_COMMAND = "\n[СУБД v0.1]> ";
+const string DBMS_CONSOLE_REQUEST_COMMAND = "\n[СУБД v1.0]> ";
 
 // справка о программе
 const string DBMS_DESCRIPTION =
